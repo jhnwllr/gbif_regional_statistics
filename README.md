@@ -23,7 +23,13 @@ devtools::install_github("jhnwllr/gbifregionalstats", subdir="gbif_regional_stat
 2. These need to run inside a `spark2-shell` instance on c4 or c5. 
 3. csv files will be saved to `/mnt/auto/misc/download.gbif.org/custom_download/jwaller/`
 
-The csv small csv files will be put in the public downloads folder, so they are accessible by the R scripts. 
+Example settings for spark2-shell
+
+```
+spark2-shell --num-executors 40 --executor-cores 5 --driver-memory 8g --driver-cores 4 --executor-memory 32g
+```
+
+The csv files will be put in the public downloads folder, so they are accessible by the R scripts. 
 
 ### Plot Examples 
 
