@@ -1,0 +1,27 @@
+"1","Observations: 38
+"
+"1","Variables: 8
+"
+"1","$ title                   [3m[90m<chr>[39m[23m ""Afghanistan"", ""Afghanistan...
+"
+"1",""
+"1","$ date                    [3m[90m<chr>[39m[23m ""2015-01-19"", ""2020-01-01"",...
+"
+"1",""
+"1","$ occ_count               [3m[90m<dbl>[39m[23m 70480, 515282, 1551597, 465...
+"
+"1",""
+"1","$ species_count           [3m[90m<dbl>[39m[23m 6763, 10660, 55435, 87830, ...
+"
+"1",""
+"1","$ occ_count_published     [3m[90m<dbl>[39m[23m 0, 9374, 530542, 2325042, 3...
+"
+"1",""
+"1","$ species_count_published [3m[90m<dbl>[39m[23m 0, 261, 17802, 44950, 20794...
+"
+"1",""
+"1","$ order_variable          [3m[90m<dbl>[39m[23m 10660, 10660, 87830, 87830,...
+"
+"1",""
+"1","$ title_                  [3m[90m<fct>[39m[23m Afghanistan, Afghanistan, C...
+"

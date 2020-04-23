@@ -1,0 +1,1724 @@
+"0","library(dplyr)"
+"0","library(purrr)"
+"0",""
+"0","# d = data.table::fread(""C:/Users/ftw712/Desktop/gbif_regional_statistics/data/country_breakdown_taxon.tsv"",na.strings=""null"") %>% "
+"0","d = readr::read_tsv(""http://download.gbif.org/custom_download/jwaller/country_breakdown_taxon.tsv"") %>%"
+"0","mutate(iso2=countrycode) %>%"
+"0","merge(gbifapi::get_gbif_countries() %>% select(iso2,title,gbifRegion),id=""iso2"") %>%"
+"0","janitor::clean_names() %>%"
+"0","mutate(gbif_region = stringr::str_replace_all(gbif_region,""_"","" "")) %>%"
+"0","mutate(gbif_region = stringr::str_to_title(gbif_region)) %>%"
+"0","mutate(gbif_region = gbifapi::replace_gbif_region(gbif_region,shorten=FALSE)) %>%"
+"0","filter(!gbif_region == ""Antarctica"") %>%"
+"0","glimpse()"
+"1","Observations: 3,125
+"
+"1","Variables: 14
+"
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""AD"", ""AD"", ""AD"", ""AD"", ""AD...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""AD"", ""AD"", ""AD"", ""AD"", ""AD...
+"
+"1",""
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 35, 5, 358, 1, 34, 6, 359, ...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 278, 985, 16, 1769, 542, 24...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 2300, 3517, 331, 52634, 199...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""AD"", ""AD"", ""AD"", ""AD"", ""AD...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 215, 852, 16, 1399, 521, 18...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 1800, 3028, 312, 49110, 177...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 113290, 113290, 113290, 113...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 4105, 4105, 4105, 4105, 410...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 132769, 132769, 132769, 132...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 5233, 5233, 5233, 5233, 523...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Andorra"", ""Andorra"", ""Ando...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""Europe and Central Asia"", ...
+"
+"0","parameters_about = tibble::tibble("
+"0","gbif_region = c(""Global"",unique(d$gbif_region))"
+"0",") %>% "
+"0","mutate(top_groups = list(c(""Birds"",""Plants"",""Insects"",""Fungi"",""Mammals""))) %>%"
+"0","mutate(variable = ""num_of_occ"") %>%"
+"0","mutate(variable_total = ""occ_total"") %>% "
+"0","mutate(plot_title = paste0(gbif_region,"""")) %>%"
+"0","mutate(plot_subtitle = ""Number of occurrences about country for popular groups"") %>% "
+"0","mutate(total_filter = 500e3) %>%"
+"0","mutate("
+"0","color_values = list(c("
+"0","Birds = ""#ff9326"", "
+"0","Plants = ""#509E2F"", "
+"0","Mammals = ""#175CA1"", "
+"0","Insects = ""#40BFFF"","
+"0","Fungi = ""#FDAF02"", "
+"0","Other = ""#ff0040""))) %>%"
+"0","glimpse() "
+"1","Observations: 7
+"
+"1","Variables: 8
+"
+"1","$ gbif_region    [3m[90m<chr>[39m[23m ""Global"", ""Europe and Central Asia"",...
+"
+"1",""
+"1","$ top_groups     [3m[90m<list>[39m[23m [<""Birds"", ""Plants"", ""Insects"", ""Fu...
+"
+"1",""
+"1","$ variable       [3m[90m<chr>[39m[23m ""num_of_occ"", ""num_of_occ"", ""num_of_...
+"
+"1",""
+"1","$ variable_total [3m[90m<chr>[39m[23m ""occ_total"", ""occ_total"", ""occ_total...
+"
+"1",""
+"1","$ plot_title     [3m[90m<chr>[39m[23m ""Global"", ""Europe and Central Asia"",...
+"
+"1",""
+"1","$ plot_subtitle  [3m[90m<chr>[39m[23m ""Number of occurrences about country...
+"
+"1",""
+"1","$ total_filter   [3m[90m<dbl>[39m[23m 5e+05, 5e+05, 5e+05, 5e+05, 5e+05, 5...
+"
+"1",""
+"1","$ color_values   [3m[90m<list>[39m[23m [<""#ff9326"", ""#509E2F"", ""#175CA1"", ...
+"
+"0","parameters_published = tibble::tibble("
+"0","gbif_region = c(""Global"",unique(d$gbif_region))"
+"0",") %>% "
+"0","mutate(top_groups = list(c(""Birds"",""Plants"",""Insects"",""Fungi"",""Mammals""))) %>%"
+"0","mutate(variable = ""num_of_occ_published"") %>%"
+"0","mutate(variable_total = ""occ_published_total"") %>% "
+"0","mutate(plot_title = paste0(gbif_region,"""")) %>%"
+"0","mutate(plot_subtitle = ""Number of published occurrences by country for popular groups"") %>% "
+"0","mutate(total_filter = 200e3) %>%"
+"0","mutate("
+"0","color_values = list(c("
+"0","Birds = ""#ff9326"", "
+"0","Plants = ""#509E2F"", "
+"0","Mammals = ""#175CA1"", "
+"0","Insects = ""#40BFFF"","
+"0","Fungi = ""#FDAF02"", "
+"0","Other = ""#ff0040""))) %>%"
+"0","glimpse()"
+"1","Observations: 7
+"
+"1","Variables: 8
+"
+"1","$ gbif_region    [3m[90m<chr>[39m[23m ""Global"", ""Europe and Central Asia"",...
+"
+"1",""
+"1","$ top_groups     [3m[90m<list>[39m[23m [<""Birds"", ""Plants"", ""Insects"", ""Fu...
+"
+"1",""
+"1","$ variable       [3m[90m<chr>[39m[23m ""num_of_occ_published"", ""num_of_occ_...
+"
+"1",""
+"1","$ variable_total [3m[90m<chr>[39m[23m ""occ_published_total"", ""occ_publishe...
+"
+"1",""
+"1","$ plot_title     [3m[90m<chr>[39m[23m ""Global"", ""Europe and Central Asia"",...
+"
+"1",""
+"1","$ plot_subtitle  [3m[90m<chr>[39m[23m ""Number of published occurrences by ...
+"
+"1",""
+"1","$ total_filter   [3m[90m<dbl>[39m[23m 2e+05, 2e+05, 2e+05, 2e+05, 2e+05, 2...
+"
+"1",""
+"1","$ color_values   [3m[90m<list>[39m[23m [<""#ff9326"", ""#509E2F"", ""#175CA1"", ...
+"
+"0","parameters = rbind(parameters_about,parameters_published) %>%"
+"0","purrr::transpose()"
+"0",""
+"0","parameters %>%"
+"0","map(~"
+"0","gbifregionalstats::plot_taxon_breakdown("
+"0","d,"
+"0","variable = .x$variable,"
+"0","variable_total = .x$variable_total,"
+"0","gbif_region = .x$gbif_region,"
+"0","top_groups = .x$top_groups,"
+"0","plot_title = .x$plot_title,"
+"0","plot_subtitle = .x$plot_subtitle,"
+"0","country_text_size = 11,"
+"0","color_values = .x$color_values,"
+"0","total_filter = .x$total_filter"
+"0",")) %>% "
+"0","map2(parameters,~{"
+"0","ggsave(paste0(path_to_plots,""country stacked barplots/pdf/country_stacked_"",.y$variable,""_"",.y$gbif_region,"".pdf""),plot=.x,width=6,height=5)"
+"0","ggsave(paste0(path_to_plots,""country stacked barplots/svg/country_stacked_"",.y$variable,""_"",.y$gbif_region,"".svg""),plot=.x,width=6,height=5)"
+"0","ggsave(paste0(path_to_plots,""country stacked barplots/jpg/country_stacked_"",.y$variable,""_"",.y$gbif_region,"".jpg""),plot=.x,width=6,height=5,dpi=600)"
+"0","})"
+"1","Observations: 3,125
+"
+"1","Variables: 18
+"
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+"
+"1",""
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""MU"", ""JO"", ""JP"", ""PW"", ""IQ...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""MU"", ""JO"", ""JP"", ""PW"", ""IQ...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 5502, 2322, 49347, 5172, 15...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 62788, 25634, 4169795, 1347...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""MU"", ""JO"", ""JP"", ""PW"", ""IQ...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 79, 303, 71603, 143, 311, 1...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 6495, 12791, 4905359, 41362...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 7535, 12791, 8192439, 41363...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 320, 303, 111412, 143, 311,...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 95357, 55805, 7957033, 1517...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 10021, 4717, 80386, 6923, 4...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Mauritius"", ""Jordan"", ""Jap...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""Africa"", ""Asia"", ""Asia"", ""...
+"
+"1",""
+"1","$ sci_name                [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ common_name             [3m[90m<chr>[39m[23m ""Animals"", ""Animals"", ""Anim...
+"
+"1",""
+"1","$ scientificname          [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ rank                    [3m[90m<chr>[39m[23m ""kingdom"", ""kingdom"", ""king...
+"
+"1","Observations: 1,212
+"
+"1","Variables: 4
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Comoros"", ""Sri Lanka"", ""Equatorial Gui...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fungi, Fung...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 50, 6553, 103, 1988, 43360, 1983, 4714,...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 33309, 456860, 88919, 306073, 4971530, ...
+"
+"1","Observations: 243
+"
+"1","Variables: 4
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Afghanistan"", ""Åland Islands"", ""Albani...
+"
+"1",""
+"1","$ common_name [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 7442, 62, 4891, 50553, 284174, 2254, 46...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 531738, 279943, 31012, 199463, 298909, ...
+"
+"1","Observations: 138
+"
+"1","Variables: 5
+"
+"1","$ title       [3m[90m<fct>[39m[23m France, Finland, Colombia, Spain, Costa...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fungi, Fung...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 264205, 113916, 36769, 448437, 83282, 6...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 82872897, 28632367, 8361281, 38489380, ...
+"
+"1",""
+"1","$ total       [3m[90m<dbl>[39m[23m 82872897, 28632367, 8361281, 38489380, ...
+"
+"1","Observations: 808
+"
+"1","Variables: 18
+"
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+"
+"1",""
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""GG"", ""AZ"", ""SM"", ""IE"", ""PT...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""GG"", ""AZ"", ""SM"", ""IE"", ""PT...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 1671, 1722, 341, 9795, 1600...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 32462, 94742, 819, 1820813,...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""GG"", ""AZ"", ""SM"", ""IE"", ""PT...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 236, 377, 53, 4476, 8334, 1...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 4312, 84475, 184, 1414133, ...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 4312, 84475, 184, 1578584, ...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 236, 377, 53, 7882, 22911, ...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 43455, 166116, 1002, 250906...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 2468, 5968, 416, 18478, 317...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Guernsey"", ""Azerbaijan"", ""...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""Europe and Central Asia"", ...
+"
+"1",""
+"1","$ sci_name                [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ common_name             [3m[90m<chr>[39m[23m ""Animals"", ""Animals"", ""Anim...
+"
+"1",""
+"1","$ scientificname          [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ rank                    [3m[90m<chr>[39m[23m ""kingdom"", ""kingdom"", ""king...
+"
+"1","Observations: 313
+"
+"1","Variables: 4
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Albania"", ""Moldova, Republic of"", ""Gre...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fungi, Fung...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 115, 434, 18243, 3469, 3517, 448437, 45...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 31012, 42257, 1239032, 1342588, 132769,...
+"
+"1","Observations: 63
+"
+"1","Variables: 4
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Åland Islands"", ""Albania"", ""Andorra"", ...
+"
+"1",""
+"1","$ common_name [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 62, 4891, 2254, 6064, 221445, 21411, 52...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 279943, 31012, 132769, 103157, 3729534,...
+"
+"1","Observations: 144
+"
+"1","Variables: 5
+"
+"1","$ title       [3m[90m<fct>[39m[23m Greece, Israel, Spain, Germany, Norway,...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fungi, Fung...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 18243, 3469, 448437, 458354, 1383719, 3...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 1239032, 1342588, 38489380, 39525817, 3...
+"
+"1",""
+"1","$ total       [3m[90m<dbl>[39m[23m 1239032, 1342588, 38489380, 39525817, 3...
+"
+"1","Observations: 541
+"
+"1","Variables: 18
+"
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+"
+"1",""
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""MV"", ""KP"", ""QA"", ""SG"", ""LA...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""MV"", ""KP"", ""QA"", ""SG"", ""LA...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 3562, 1432, 626, 6893, 4062...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 23935, 7879, 31447, 377007,...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""MV"", ""KP"", ""QA"", ""SG"", ""LA...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 52, 186, 277, 601, 574, 303...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 504, 1098, 24258, 312329, 1...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 504, 1098, 24258, 312329, 1...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 52, 186, 277, 601, 574, 303...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 86755, 33242, 32978, 399912...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 4852, 4292, 1050, 11716, 89...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Maldives"", ""Korea, Democra...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""Asia"", ""Asia"", ""Asia"", ""As...
+"
+"1",""
+"1","$ sci_name                [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ common_name             [3m[90m<chr>[39m[23m ""Animals"", ""Animals"", ""Anim...
+"
+"1",""
+"1","$ scientificname          [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ rank                    [3m[90m<chr>[39m[23m ""kingdom"", ""kingdom"", ""king...
+"
+"1","Observations: 210
+"
+"1","Variables: 4
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Brunei Darussalam"", ""Lao People's Demo...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fungi, Fung...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 820, 491, 12280, 2646, 704, 178, 3654, ...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 39825, 129932, 6496942, 240356, 85736, ...
+"
+"1","Observations: 42
+"
+"1","Variables: 4
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Afghanistan"", ""Bahrain"", ""Bangladesh"",...
+"
+"1",""
+"1","$ common_name [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 7442, 1821, 7856, 638, 27453, 6994, 184...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 531738, 7507, 98887, 158126, 32910, 398...
+"
+"1","Observations: 66
+"
+"1","Variables: 5
+"
+"1","$ title       [3m[90m<fct>[39m[23m Taiwan, India, Japan, Indonesia, Malays...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fungi, Fung...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 12280, 63385, 179531, 8304, 15292, 2301...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 6496942, 13364982, 7957033, 2317788, 16...
+"
+"1",""
+"1","$ total       [3m[90m<dbl>[39m[23m 6496942, 13364982, 7957033, 2317788, 16...
+"
+"1","Observations: 660
+"
+"1","Variables: 18
+"
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+"
+"1",""
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""VG"", ""AR"", ""EC"", ""CO"", ""HN...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""VG"", ""AR"", ""EC"", ""CO"", ""HN...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 1996, 24284, 21920, 29476, ...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 31872, 4038847, 3372919, 59...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""VG"", ""AR"", ""EC"", ""CO"", ""HN...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 148, 23522, 1771, 15122, 81...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 13733, 3650371, 2811609, 54...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 13733, 4266370, 2830697, 10...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 148, 58811, 3647, 59821, 81...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 38004, 4971530, 4364705, 83...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 3032, 50853, 53735, 71915, ...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Virgin Islands, British"", ...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""Latin America and The Cari...
+"
+"1",""
+"1","$ sci_name                [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ common_name             [3m[90m<chr>[39m[23m ""Animals"", ""Animals"", ""Anim...
+"
+"1",""
+"1","$ scientificname          [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ rank                    [3m[90m<chr>[39m[23m ""kingdom"", ""kingdom"", ""king...
+"
+"1","Observations: 255
+"
+"1","Variables: 4
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Venezuela, Bolivarian Republic of"", ""G...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fungi, Fung...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 19039, 13187, 18, 15961, 12019, 83282, ...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 1855176, 528270, 121322, 4364705, 33401...
+"
+"1","Observations: 51
+"
+"1","Variables: 4
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Anguilla"", ""Antigua and Barbuda"", ""Arg...
+"
+"1",""
+"1","$ common_name [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 4325, 12342, 558012, 8250, 248491, 2875...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 27031, 36400, 4971530, 96299, 666113, 9...
+"
+"1","Observations: 138
+"
+"1","Variables: 5
+"
+"1","$ title       [3m[90m<fct>[39m[23m Venezuela, Guyana, Ecuador, Panama, Cos...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fungi, Fung...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 19039, 13187, 15961, 12019, 83282, 1576...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 1855176, 528270, 4364705, 3340193, 1141...
+"
+"1",""
+"1","$ total       [3m[90m<dbl>[39m[23m 1855176, 528270, 4364705, 3340193, 1141...
+"
+"1","Observations: 750
+"
+"1","Variables: 18
+"
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+"
+"1",""
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""CD"", ""LR"", ""MR"", ""GN"", ""DZ...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""CD"", ""LR"", ""MR"", ""GN"", ""DZ...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 10658, 3549, 2955, 3510, 67...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 384798, 76140, 73789, 63619...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""CD"", ""LR"", ""MR"", ""GN"", ""DZ...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 1087, 462, 423, 439, 297, 2...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 42630, 15206, 11118, 8381, ...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 51044, 15872, 12870, 40202,...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 2763, 542, 860, 2612, 297, ...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 1000738, 128598, 96543, 142...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 26959, 6822, 4341, 8500, 14...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Congo, Democratic Republic...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""Africa"", ""Africa"", ""Africa...
+"
+"1",""
+"1","$ sci_name                [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ common_name             [3m[90m<chr>[39m[23m ""Animals"", ""Animals"", ""Anim...
+"
+"1",""
+"1","$ scientificname          [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ rank                    [3m[90m<chr>[39m[23m ""kingdom"", ""kingdom"", ""king...
+"
+"1","Observations: 290
+"
+"1","Variables: 4
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Lesotho"", ""Sierra Leone"", ""Djibouti"", ...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fungi, Fung...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 871, 4077, 8, 462, 2197, 2668, 103, 162...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 118434, 86805, 21334, 30709, 138016, 10...
+"
+"1","Observations: 58
+"
+"1","Variables: 4
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Algeria"", ""Angola"", ""Benin"", ""Botswana...
+"
+"1",""
+"1","$ common_name [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 50553, 46733, 67460, 23110, 3699, 12227...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 199463, 269108, 674293, 406627, 225755,...
+"
+"1","Observations: 60
+"
+"1","Variables: 5
+"
+"1","$ title       [3m[90m<fct>[39m[23m Madagascar, Ethiopia, Morocco, Cameroon...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fungi, Fung...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 3618, 3629, 7613, 2091, 4452, 44232, 18...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 1343423, 563051, 729335, 575580, 706757...
+"
+"1",""
+"1","$ total       [3m[90m<dbl>[39m[23m 1343423, 563051, 729335, 575580, 706757...
+"
+"1","Observations: 327
+"
+"1","Variables: 18
+"
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+"
+"1",""
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""NF"", ""PF"", ""AU"", ""NU"", ""GU...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""NF"", ""PF"", ""AU"", ""NU"", ""GU...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 1957, 8338, 90487, 1043, 44...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 33120, 270892, 64751550, 11...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""NF"", ""PF"", ""AU"", ""NU"", ""GU...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 110, 109, 77849, 34, 110, 9...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 13190, 9985, 61212519, 272,...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 13190, 9985, 80391315, 272,...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 110, 109, 130244, 34, 110, ...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 43671, 411258, 90628167, 16...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 3434, 13063, 144337, 1856, ...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Norfolk Island"", ""French P...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""Oceania"", ""Oceania"", ""Ocea...
+"
+"1",""
+"1","$ sci_name                [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ common_name             [3m[90m<chr>[39m[23m ""Animals"", ""Animals"", ""Anim...
+"
+"1",""
+"1","$ scientificname          [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ rank                    [3m[90m<chr>[39m[23m ""kingdom"", ""kingdom"", ""king...
+"
+"1","Observations: 129
+"
+"1","Variables: 4
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Tuvalu"", ""Norfolk Island"", ""Micronesia...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fungi, Fung...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 139, 2701, 1161, 21, 925, 311, 32, 1881...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 9537, 43671, 119369, 4967, 67387, 16140...
+"
+"1","Observations: 26
+"
+"1","Variables: 4
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""American Samoa"", ""Australia"", ""Cook Is...
+"
+"1",""
+"1","$ common_name [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 284174, 12556627, 31994, 113806, 300288...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 298909, 90628167, 54751, 253919, 411258...
+"
+"1","Observations: 24
+"
+"1","Variables: 5
+"
+"1","$ title       [3m[90m<fct>[39m[23m New Zealand, New Caledonia, Australia, ...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Plants, Pla...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 187287, 2146, 1830793, 26672, 233354, 5...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 7389747, 714928, 90628167, 1367612, 714...
+"
+"1",""
+"1","$ total       [3m[90m<dbl>[39m[23m 7389747, 714928, 90628167, 1367612, 714...
+"
+"1","Observations: 39
+"
+"1","Variables: 18
+"
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 1, 1, 1, 5, 5, 5, 6, 6, 6, ...
+"
+"1",""
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""CA"", ""US"", ""PM"", ""US"", ""CA...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""CA"", ""US"", ""PM"", ""US"", ""CA...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 50007, 196299, 453, 35033, ...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 67316216, 442075100, 9151, ...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""CA"", ""US"", ""PM"", ""US"", ""CA...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 59614, 623776, 184, 63036, ...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 62519871, 462482159, 2051, ...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 64734996, 496247750, 2051, ...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 124122, 1023883, 184, 10238...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 71078754, 466457156, 13959,...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 84683, 310892, 1227, 310892...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Canada"", ""United States of...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""North America"", ""North Ame...
+"
+"1",""
+"1","$ sci_name                [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ common_name             [3m[90m<chr>[39m[23m ""Animals"", ""Animals"", ""Anim...
+"
+"1",""
+"1","$ scientificname          [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ rank                    [3m[90m<chr>[39m[23m ""kingdom"", ""kingdom"", ""king...
+"
+"1","Observations: 15
+"
+"1","Variables: 4
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""United States of America"", ""Canada"", ""...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Plants, Plants, Pl...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 1984016, 388654, 101, 15509508, 2137, 2...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 466457156, 71078754, 13959, 466457156, ...
+"
+"1","Observations: 3
+"
+"1","Variables: 4
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Canada"", ""Saint Pierre and Miquelon"", ...
+"
+"1",""
+"1","$ common_name [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other""
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 3411279, 7939, 29170606
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 71078754, 13959, 466457156
+"
+"1","Observations: 12
+"
+"1","Variables: 5
+"
+"1","$ title       [3m[90m<fct>[39m[23m United States of America, Canada, Unite...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Plants, Plants, Birds, Bi...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 1984016, 388654, 15509508, 2642067, 584...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 466457156, 71078754, 466457156, 7107875...
+"
+"1",""
+"1","$ total       [3m[90m<dbl>[39m[23m 466457156, 71078754, 466457156, 7107875...
+"
+"1","Observations: 3,125
+"
+"1","Variables: 18
+"
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+"
+"1",""
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""MU"", ""JO"", ""JP"", ""PW"", ""IQ...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""MU"", ""JO"", ""JP"", ""PW"", ""IQ...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 5502, 2322, 49347, 5172, 15...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 62788, 25634, 4169795, 1347...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""MU"", ""JO"", ""JP"", ""PW"", ""IQ...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 79, 303, 71603, 143, 311, 1...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 6495, 12791, 4905359, 41362...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 7535, 12791, 8192439, 41363...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 320, 303, 111412, 143, 311,...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 95357, 55805, 7957033, 1517...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 10021, 4717, 80386, 6923, 4...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Mauritius"", ""Jordan"", ""Jap...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""Africa"", ""Asia"", ""Asia"", ""...
+"
+"1",""
+"1","$ sci_name                [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ common_name             [3m[90m<chr>[39m[23m ""Animals"", ""Animals"", ""Anim...
+"
+"1",""
+"1","$ scientificname          [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ rank                    [3m[90m<chr>[39m[23m ""kingdom"", ""kingdom"", ""king...
+"
+"1","Observations: 1,212
+"
+"1","Variables: 4
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Comoros"", ""Sri Lanka"", ""Equat...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fu...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m NA, NA, NA, NA, 16154, NA, NA,...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m NA, NA, NA, NA, 4266370, NA, N...
+"
+"1","Observations: 438
+"
+"1","Variables: 4
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Afghanistan"", ""Afghanistan"", ...
+"
+"1",""
+"1","$ common_name          [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 0, NA, NA, 0, NA, 0, NA, 0, NA...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 9374, NA, NA, 5031, NA, 18586,...
+"
+"1","Observations: 138
+"
+"1","Variables: 5
+"
+"1","$ title                [3m[90m<fct>[39m[23m France, Finland, Colombia, Spa...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fu...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 220630, 62274, 16572, 450592, ...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 89953822, 29030033, 10518926, ...
+"
+"1",""
+"1","$ total                [3m[90m<dbl>[39m[23m 89953822, 29030033, 10518926, ...
+"
+"1","Observations: 808
+"
+"1","Variables: 18
+"
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+"
+"1",""
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""GG"", ""AZ"", ""SM"", ""IE"", ""PT...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""GG"", ""AZ"", ""SM"", ""IE"", ""PT...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 1671, 1722, 341, 9795, 1600...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 32462, 94742, 819, 1820813,...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""GG"", ""AZ"", ""SM"", ""IE"", ""PT...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 236, 377, 53, 4476, 8334, 1...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 4312, 84475, 184, 1414133, ...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 4312, 84475, 184, 1578584, ...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 236, 377, 53, 7882, 22911, ...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 43455, 166116, 1002, 250906...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 2468, 5968, 416, 18478, 317...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Guernsey"", ""Azerbaijan"", ""...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""Europe and Central Asia"", ...
+"
+"1",""
+"1","$ sci_name                [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ common_name             [3m[90m<chr>[39m[23m ""Animals"", ""Animals"", ""Anim...
+"
+"1",""
+"1","$ scientificname          [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ rank                    [3m[90m<chr>[39m[23m ""kingdom"", ""kingdom"", ""king...
+"
+"1","Observations: 313
+"
+"1","Variables: 4
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Albania"", ""Moldova, Republic ...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fu...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m NA, NA, NA, 62, 3028, 450592, ...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m NA, NA, NA, 1224980, 113290, 3...
+"
+"1","Observations: 103
+"
+"1","Variables: 4
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Åland Islands"", ""Albania"", ""A...
+"
+"1",""
+"1","$ common_name          [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m NA, 0, NA, 1777, 0, NA, 169146...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m NA, 5031, NA, 113290, 10171, N...
+"
+"1","Observations: 120
+"
+"1","Variables: 5
+"
+"1","$ title                [3m[90m<fct>[39m[23m Israel, Spain, Germany, Norway...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fu...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 62, 450592, 639719, 1452049, 2...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 1224980, 38099265, 47167592, 3...
+"
+"1",""
+"1","$ total                [3m[90m<dbl>[39m[23m 1224980, 38099265, 47167592, 3...
+"
+"1","Observations: 541
+"
+"1","Variables: 18
+"
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+"
+"1",""
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""MV"", ""KP"", ""QA"", ""SG"", ""LA...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""MV"", ""KP"", ""QA"", ""SG"", ""LA...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 3562, 1432, 626, 6893, 4062...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 23935, 7879, 31447, 377007,...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""MV"", ""KP"", ""QA"", ""SG"", ""LA...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 52, 186, 277, 601, 574, 303...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 504, 1098, 24258, 312329, 1...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 504, 1098, 24258, 312329, 1...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 52, 186, 277, 601, 574, 303...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 86755, 33242, 32978, 399912...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 4852, 4292, 1050, 11716, 89...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Maldives"", ""Korea, Democra...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""Asia"", ""Asia"", ""Asia"", ""As...
+"
+"1",""
+"1","$ sci_name                [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ common_name             [3m[90m<chr>[39m[23m ""Animals"", ""Animals"", ""Anim...
+"
+"1",""
+"1","$ scientificname          [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ rank                    [3m[90m<chr>[39m[23m ""kingdom"", ""kingdom"", ""king...
+"
+"1","Observations: 210
+"
+"1","Variables: 4
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Brunei Darussalam"", ""Lao Peop...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fu...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m NA, NA, 9088, NA, NA, NA, NA, ...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m NA, NA, 6238411, NA, NA, NA, N...
+"
+"1","Observations: 78
+"
+"1","Variables: 4
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Afghanistan"", ""Afghanistan"", ...
+"
+"1",""
+"1","$ common_name          [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 0, NA, 0, NA, 0, NA, 0, NA, 0,...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 9374, NA, 4776, NA, 12715, NA,...
+"
+"1","Observations: 36
+"
+"1","Variables: 5
+"
+"1","$ title                [3m[90m<fct>[39m[23m Taiwan, India, Japan, Indonesi...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fu...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 9088, 67, 200188, 8, 40696, 24...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 6238411, 12161936, 8192439, 40...
+"
+"1",""
+"1","$ total                [3m[90m<dbl>[39m[23m 6238411, 12161936, 8192439, 40...
+"
+"1","Observations: 660
+"
+"1","Variables: 18
+"
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+"
+"1",""
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""VG"", ""AR"", ""EC"", ""CO"", ""HN...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""VG"", ""AR"", ""EC"", ""CO"", ""HN...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 1996, 24284, 21920, 29476, ...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 31872, 4038847, 3372919, 59...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""VG"", ""AR"", ""EC"", ""CO"", ""HN...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 148, 23522, 1771, 15122, 81...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 13733, 3650371, 2811609, 54...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 13733, 4266370, 2830697, 10...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 148, 58811, 3647, 59821, 81...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 38004, 4971530, 4364705, 83...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 3032, 50853, 53735, 71915, ...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Virgin Islands, British"", ...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""Latin America and The Cari...
+"
+"1",""
+"1","$ sci_name                [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ common_name             [3m[90m<chr>[39m[23m ""Animals"", ""Animals"", ""Anim...
+"
+"1",""
+"1","$ scientificname          [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ rank                    [3m[90m<chr>[39m[23m ""kingdom"", ""kingdom"", ""king...
+"
+"1","Observations: 255
+"
+"1","Variables: 4
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Venezuela, Bolivarian Republi...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fu...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 173, NA, NA, NA, NA, 49934, NA...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 1200348, NA, NA, NA, NA, 96511...
+"
+"1","Observations: 94
+"
+"1","Variables: 4
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Anguilla"", ""Anguilla"", ""Antig...
+"
+"1",""
+"1","$ common_name          [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 0, NA, 0, NA, 471315, 0, NA, 0...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 18538, NA, 14767, NA, 4266370,...
+"
+"1","Observations: 48
+"
+"1","Variables: 5
+"
+"1","$ title                [3m[90m<fct>[39m[23m Venezuela, Costa Rica, Chile, ...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fu...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 173, 49934, 5, 16154, 16572, 6...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 1200348, 9651135, 1741339, 426...
+"
+"1",""
+"1","$ total                [3m[90m<dbl>[39m[23m 1200348, 9651135, 1741339, 426...
+"
+"1","Observations: 750
+"
+"1","Variables: 18
+"
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+"
+"1",""
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""CD"", ""LR"", ""MR"", ""GN"", ""DZ...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""CD"", ""LR"", ""MR"", ""GN"", ""DZ...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 10658, 3549, 2955, 3510, 67...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 384798, 76140, 73789, 63619...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""CD"", ""LR"", ""MR"", ""GN"", ""DZ...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 1087, 462, 423, 439, 297, 2...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 42630, 15206, 11118, 8381, ...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 51044, 15872, 12870, 40202,...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 2763, 542, 860, 2612, 297, ...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 1000738, 128598, 96543, 142...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 26959, 6822, 4341, 8500, 14...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Congo, Democratic Republic...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""Africa"", ""Africa"", ""Africa...
+"
+"1",""
+"1","$ sci_name                [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ common_name             [3m[90m<chr>[39m[23m ""Animals"", ""Animals"", ""Anim...
+"
+"1",""
+"1","$ scientificname          [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ rank                    [3m[90m<chr>[39m[23m ""kingdom"", ""kingdom"", ""king...
+"
+"1","Observations: 290
+"
+"1","Variables: 4
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Lesotho"", ""Sierra Leone"", ""Dj...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fu...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA...
+"
+"1","Observations: 111
+"
+"1","Variables: 4
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Algeria"", ""Algeria"", ""Angola""...
+"
+"1",""
+"1","$ common_name          [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 0, NA, 58, NA, 59036, 1755, NA...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 18586, NA, 76273, NA, 583287, ...
+"
+"1","Observations: 12
+"
+"1","Variables: 5
+"
+"1","$ title                [3m[90m<fct>[39m[23m South Africa, Benin, South Afr...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Plants, Plants, ...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 30512, 2180, 1861767, 443533, ...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 26654391, 583287, 26654391, 58...
+"
+"1",""
+"1","$ total                [3m[90m<dbl>[39m[23m 26654391, 583287, 26654391, 58...
+"
+"1","Observations: 327
+"
+"1","Variables: 18
+"
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+"
+"1",""
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""NF"", ""PF"", ""AU"", ""NU"", ""GU...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""NF"", ""PF"", ""AU"", ""NU"", ""GU...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 1957, 8338, 90487, 1043, 44...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 33120, 270892, 64751550, 11...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""NF"", ""PF"", ""AU"", ""NU"", ""GU...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 110, 109, 77849, 34, 110, 9...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 13190, 9985, 61212519, 272,...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 13190, 9985, 80391315, 272,...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 110, 109, 130244, 34, 110, ...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 43671, 411258, 90628167, 16...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 3434, 13063, 144337, 1856, ...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Norfolk Island"", ""French P...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""Oceania"", ""Oceania"", ""Ocea...
+"
+"1",""
+"1","$ sci_name                [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ common_name             [3m[90m<chr>[39m[23m ""Animals"", ""Animals"", ""Anim...
+"
+"1",""
+"1","$ scientificname          [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ rank                    [3m[90m<chr>[39m[23m ""kingdom"", ""kingdom"", ""king...
+"
+"1","Observations: 129
+"
+"1","Variables: 4
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Tuvalu"", ""Norfolk Island"", ""M...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fu...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA...
+"
+"1","Observations: 48
+"
+"1","Variables: 4
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""American Samoa"", ""American Sa...
+"
+"1",""
+"1","$ common_name          [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 0, NA, 8191472, 0, NA, 2134, N...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 3663, NA, 80391315, 2573, NA, ...
+"
+"1","Observations: 12
+"
+"1","Variables: 5
+"
+"1","$ title                [3m[90m<fct>[39m[23m New Zealand, Australia, Austra...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Plants, Plants, ...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 159726, 1772888, 16336532, 209...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 5781313, 80391315, 80391315, 5...
+"
+"1",""
+"1","$ total                [3m[90m<dbl>[39m[23m 5781313, 80391315, 80391315, 5...
+"
+"1","Observations: 39
+"
+"1","Variables: 18
+"
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 1, 1, 1, 5, 5, 5, 6, 6, 6, ...
+"
+"1",""
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""CA"", ""US"", ""PM"", ""US"", ""CA...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""CA"", ""US"", ""PM"", ""US"", ""CA...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 50007, 196299, 453, 35033, ...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 67316216, 442075100, 9151, ...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""CA"", ""US"", ""PM"", ""US"", ""CA...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 59614, 623776, 184, 63036, ...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 62519871, 462482159, 2051, ...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 64734996, 496247750, 2051, ...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 124122, 1023883, 184, 10238...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 71078754, 466457156, 13959,...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 84683, 310892, 1227, 310892...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Canada"", ""United States of...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""North America"", ""North Ame...
+"
+"1",""
+"1","$ sci_name                [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ common_name             [3m[90m<chr>[39m[23m ""Animals"", ""Animals"", ""Anim...
+"
+"1",""
+"1","$ scientificname          [3m[90m<chr>[39m[23m ""Animalia"", ""Animalia"", ""An...
+"
+"1",""
+"1","$ rank                    [3m[90m<chr>[39m[23m ""kingdom"", ""kingdom"", ""king...
+"
+"1","Observations: 15
+"
+"1","Variables: 4
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""United States of America"", ""C...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Plants, P...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 2624413, 213690, NA, 28687608,...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 496247750, 64734996, NA, 49624...
+"
+"1","Observations: 4
+"
+"1","Variables: 4
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Canada"", ""Saint Pierre and Mi...
+"
+"1",""
+"1","$ common_name          [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 1913288, 0, NA, 33348415
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 64734996, 2051, NA, 496247750
+"
+"1","Observations: 12
+"
+"1","Variables: 5
+"
+"1","$ title                [3m[90m<fct>[39m[23m United States of America, Cana...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Plants, Plants, ...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 2624413, 213690, 28687608, 194...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 496247750, 64734996, 496247750...
+"
+"1",""
+"1","$ total                [3m[90m<dbl>[39m[23m 496247750, 64734996, 496247750...
+"
+"1","[[1]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[2]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[3]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[4]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[5]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[6]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[7]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[8]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[9]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[10]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[11]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[12]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[13]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[14]]
+"
+"1","NULL
+"
+"1","
+"

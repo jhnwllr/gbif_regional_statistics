@@ -68,7 +68,7 @@
 "
 "0","ggsave(paste0(path_to_plots,""network health/pdf/network_health_country.pdf""),plot=p,width=7,height=10)"
 "0","ggsave(paste0(path_to_plots,""network health/svg/network_health_country.svg""),plot=p,width=7,height=10)"
-"0","ggsave(paste0(path_to_plots,""network health/jpg/network_health_country.jpg""),plot=p,width=7,height=10,dpi=1200)"
+"0","ggsave(paste0(path_to_plots,""network health/jpg/network_health_country.jpg""),plot=p,width=7,height=10,dpi=600)"
 "0",""
 "0","p = gbifregionalstats::plot_network_health("
 "0","d,"
