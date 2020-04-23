@@ -1,0 +1,135 @@
+"0",""
+"0","library(dplyr)"
+"0","library(purrr)"
+"0",""
+"0","d = readr::read_tsv(""http://download.gbif.org/custom_download/jwaller/gbif_regions_counts.tsv"") %>% "
+"0","mutate(gbif_region = stringr::str_replace_all(gbif_region,""_"","" "")) %>%"
+"0","mutate(gbif_region = stringr::str_to_title(gbif_region)) %>%"
+"0","mutate(gbif_region = forcats::fct_reorder(gbif_region,occ_count)) %>%"
+"0","filter(!gbif_region == ""Antarctica"") %>%"
+"0","glimpse() "
+"1","Observations: 12
+"
+"1","Variables: 6
+"
+"1","$ gbif_region    [3m[90m<fct>[39m[23m Asia, Oceania, North America, Europe, Africa, Latin America, Asia, ...
+"
+"1",""
+"1","$ occ_count      [3m[90m<dbl>[39m[23m 49626671, 102528582, 537540104, 546235201, 43153327, 91026371, 3846...
+"
+"1",""
+"1","$ num_datasets   [3m[90m<dbl>[39m[23m 2855, 2367, 2593, 9472, 2666, 5156, 748, 513, 889, 15238, 620, 2765
+"
+"1",""
+"1","$ num_publishers [3m[90m<dbl>[39m[23m 581, 514, 576, 944, 630, 747, 73, 106, 234, 616, 123, 298
+"
+"1",""
+"1","$ num_species    [3m[90m<dbl>[39m[23m 363276, 224530, 328891, 361985, 243570, 443957, 176786, 166730, 103...
+"
+"1",""
+"1","$ type           [3m[90m<chr>[39m[23m ""about"", ""about"", ""about"", ""about"", ""about"", ""about"", ""published"", ...
+"
+"0","parameters_occ = "
+"0","tibble::tibble("
+"0","	variable = ""occ_count"","
+"0","	plot_title=""Number of Occurrences"","
+"0","	plot_subtitle = ""Number of occurrences about/published by GBIF regions"","
+"0","	variable_pretty = """","
+"0","	y_lab = ""number of occurrences"","
+"0","	unit_scale = 1e-6,"
+"0","	unit_MK = ""M"","
+"0","	fill=""#509E2F"") "
+"0",""
+"0","parameters_species = "
+"0","tibble::tibble("
+"0","	variable = ""num_species"","
+"0","	plot_title=""Number of Species"","
+"0","	plot_subtitle = ""Number of species about/published by GBIF regions"","
+"0","	variable_pretty = """","
+"0","	y_lab = ""number of species"","
+"0","	unit_scale = 1e-3,"
+"0","	unit_MK = ""K"","
+"0","	fill=""#FDAF02"")	"
+"0",""
+"0","parameters = rbind(parameters_species,parameters_occ) %>% "
+"0","purrr::transpose()"
+"0",""
+"0","parameters %>% "
+"0","map(~	"
+"0","gbifregionalstats::plot_comparison_barchart("
+"0","d,"
+"0","variable = .x$variable,"
+"0","plot_title=.x$plot_title,"
+"0","plot_subtitle = .x$plot_subtitle,"
+"0","variable_pretty = """","
+"0","y_lab = .x$y_lab,"
+"0","unit_scale = .x$unit_scale,"
+"0","unit_MK = .x$unit_MK,"
+"0","fill= .x$fill,"
+"0","footnote=""published records - do not necessarily occur within the region\nabout records - must occur within the region"")"
+"0",") %>% "
+"0","map2(parameters,~ {"
+"0","ggsave(paste0(path_to_plots,""comparison barchart/pdf/gbif_regions_"",.y$variable,"".pdf""), plot = .x,width=6,height=5)"
+"0","ggsave(paste0(path_to_plots,""/comparison barchart/svg/gbif_regions_"",.y$variable,"".svg""), plot = .x,width=6,height=5)"
+"0","ggsave(paste0(path_to_plots,""/comparison barchart/jpg/gbif_regions_"",.y$variable,"".jpg""), plot = .x,width=6,height=5,dpi=600)"
+"0","})"
+"1","Observations: 12
+"
+"1","Variables: 7
+"
+"1","$ gbif_region    [3m[90m<fct>[39m[23m Asia, Oceania, North America, Europe, Africa, Latin America, Asia, ...
+"
+"1",""
+"1","$ occ_count      [3m[90m<dbl>[39m[23m 49626671, 102528582, 537540104, 546235201, 43153327, 91026371, 3846...
+"
+"1",""
+"1","$ num_datasets   [3m[90m<dbl>[39m[23m 2855, 2367, 2593, 9472, 2666, 5156, 748, 513, 889, 15238, 620, 2765
+"
+"1",""
+"1","$ num_publishers [3m[90m<dbl>[39m[23m 581, 514, 576, 944, 630, 747, 73, 106, 234, 616, 123, 298
+"
+"1",""
+"1","$ num_species    [3m[90m<dbl>[39m[23m 363276, 224530, 328891, 361985, 243570, 443957, 176786, 166730, 103...
+"
+"1",""
+"1","$ type           [3m[90m<fct>[39m[23m about, about, about, about, about, about, published, published, pub...
+"
+"1",""
+"1","$ gbifregion     [3m[90m<fct>[39m[23m Asia, Oceania, North America, Europe, Africa, Latin America, Asia, ...
+"
+"1","Observations: 12
+"
+"1","Variables: 7
+"
+"1","$ gbif_region    [3m[90m<fct>[39m[23m Asia, Oceania, North America, Europe, Africa, Latin America, Asia, ...
+"
+"1",""
+"1","$ occ_count      [3m[90m<dbl>[39m[23m 49626671, 102528582, 537540104, 546235201, 43153327, 91026371, 3846...
+"
+"1",""
+"1","$ num_datasets   [3m[90m<dbl>[39m[23m 2855, 2367, 2593, 9472, 2666, 5156, 748, 513, 889, 15238, 620, 2765
+"
+"1",""
+"1","$ num_publishers [3m[90m<dbl>[39m[23m 581, 514, 576, 944, 630, 747, 73, 106, 234, 616, 123, 298
+"
+"1",""
+"1","$ num_species    [3m[90m<dbl>[39m[23m 363276, 224530, 328891, 361985, 243570, 443957, 176786, 166730, 103...
+"
+"1",""
+"1","$ type           [3m[90m<fct>[39m[23m about, about, about, about, about, about, published, published, pub...
+"
+"1",""
+"1","$ gbifregion     [3m[90m<fct>[39m[23m Asia, Oceania, North America, Europe, Africa, Latin America, Asia, ...
+"
+"1","[[1]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[2]]
+"
+"1","NULL
+"
+"1","
+"

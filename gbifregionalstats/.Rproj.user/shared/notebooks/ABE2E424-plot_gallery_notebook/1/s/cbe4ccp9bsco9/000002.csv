@@ -1,0 +1,97 @@
+"0","// gbif_regions_counts.tsv
+
+import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.functions._;
+
+// val database = ""uat""
+val database = ""prod_h""
+
+val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+
+val df_gbif_regions = spark.read.
+option(""sep"", ""\t"").
+option(""header"", ""true"").
+csv(""gbif_regions.tsv""). 
+withColumn(""publishingcountry"",$""iso2""). // add columns for joining later 
+withColumn(""countrycode"",$""iso2""). 
+withColumn(""gbif_region"",$""gbifRegion"")
+
+
+// val df_published = sqlContext.sql(""SELECT * FROM prod_h.occurrence_pipeline_hdfs"").
+val df_published = sqlContext.sql(""SELECT * FROM "" + database + "".occurrence_pipeline_hdfs"").
+filter($""publishingorgkey"" =!= ""7ce8aef0-9e92-11dc-8738-b8a03c50a862""). // filter out plazi
+select(""publishingcountry"",""kingdom"",""phylum"",""class"",""datasetkey"",""publishingorgkey"",""specieskey"").
+join(df_gbif_regions,""publishingcountry"").
+groupBy(""gbif_region"").
+agg(count(lit(1)).as(""num_occ""),countDistinct(""datasetkey"").as(""num_datasets""),countDistinct(""publishingorgkey"").as(""num_publishers""),countDistinct(""specieskey"").as(""num_species"")).
+withColumn(""type"",lit(""published""))
+
+val df_about = sqlContext.sql(""SELECT * FROM "" + database + "".occurrence_pipeline_hdfs"").
+filter($""publishingorgkey"" =!= ""7ce8aef0-9e92-11dc-8738-b8a03c50a862""). // filter out plazi
+select(""countrycode"",""kingdom"",""phylum"",""class"",""datasetkey"",""publishingorgkey"",""specieskey"").
+join(df_gbif_regions,""countrycode"").
+groupBy(""gbif_region"").
+agg(count(lit(1)).as(""occ_count""),countDistinct(""datasetkey"").as(""num_datasets""),countDistinct(""publishingorgkey"").as(""num_publishers""),countDistinct(""specieskey"").as(""num_species"")).
+withColumn(""type"",lit(""about""))
+
+val df_export = List(df_about,df_published).reduce(_ union _)
+
+import org.apache.spark.sql.SaveMode
+import sys.process._
+
+val save_table_name = ""gbif_regions_counts.tsv""
+
+df_export.coalesce(1). // need this otherwise you get multi headers
+write.format(""csv"").
+option(""sep"", ""\t"").
+option(""header"", ""true"").
+mode(SaveMode.Overwrite).
+save(save_table_name) 
+
+// export and copy file to right location 
+(s""hdfs dfs -ls"")!
+(s""rm "" + save_table_name)!
+(s""hdfs dfs -getmerge /user/jwaller/""+ save_table_name + "" "" + save_table_name)!
+(s""cat "" + save_table_name)!
+(s""rm /mnt/auto/misc/download.gbif.org/custom_download/jwaller/"" + save_table_name)!
+(s""ls -lh /mnt/auto/misc/download.gbif.org/custom_download/jwaller/"")!
+(s""cp /home/jwaller/"" + save_table_name + "" /mnt/auto/misc/download.gbif.org/custom_download/jwaller/"" + save_table_name)!"
+"2","C:\Users\ftw712\AppData\Local\Temp\Rtmpukxx9O\chunk-code-34341cc513a5.txt:3: error: object apache is not a member of package org
+import org.apache.spark.sql.DataFrame;
+           ^
+C:\Users\ftw712\AppData\Local\Temp\Rtmpukxx9O\chunk-code-34341cc513a5.txt:4: error: object apache is not a member of package org
+import org.apache.spark.sql.functions._;
+           ^
+"
+"2","C:\Users\ftw712\AppData\Local\Temp\Rtmpukxx9O\chunk-code-34341cc513a5.txt:9: error: object apache is not a member of package org
+val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+                         ^
+C:\Users\ftw712\AppData\Local\Temp\Rtmpukxx9O\chunk-code-34341cc513a5.txt:9: error: not found: value sc
+val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+                                                     ^
+"
+"2","C:\Users\ftw712\AppData\Local\Temp\Rtmpukxx9O\chunk-code-34341cc513a5.txt:11: error: not found: value spark
+val df_gbif_regions = spark.read.
+                      ^
+C:\Users\ftw712\AppData\Local\Temp\Rtmpukxx9O\chunk-code-34341cc513a5.txt:15: error: value $ is not a member of StringContext
+withColumn(""publishingcountry"",$""iso2""). // add columns for joining later
+                               ^
+C:\Users\ftw712\AppData\Local\Temp\Rtmpukxx9O\chunk-code-34341cc513a5.txt:16: error: value $ is not a member of StringContext
+withColumn(""countrycode"",$""iso2"").
+                         ^
+C:\Users\ftw712\AppData\Local\Temp\Rtmpukxx9O\chunk-code-34341cc513a5.txt:17: error: value $ is not a member of StringContext
+withColumn(""gbif_region"",$""gbifRegion"")
+                         ^
+"
+"2","C:\Users\ftw712\AppData\Local\Temp\Rtmpukxx9O\chunk-code-34341cc513a5.txt:39: error: object apache is not a member of package org
+import org.apache.spark.sql.SaveMode
+           ^
+"
+"2","C:\Users\ftw712\AppData\Local\Temp\Rtmpukxx9O\chunk-code-34341cc513a5.txt:53: error: type mismatch;
+ found   : String
+ required: scala.sys.process.ProcessLogger
+(s""rm "" + save_table_name)!
+        ^
+"
+"2","10 errors found
+"

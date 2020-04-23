@@ -1,0 +1,404 @@
+"0","library(dplyr)"
+"0","library(roperators)"
+"0","library(purrr)"
+"0",""
+"0","d = readr::read_tsv(""http://download.gbif.org/custom_download/jwaller/gbif_regions_time_series.tsv"") %>%"
+"0","mutate(gbif_region = stringr::str_replace_all(gbif_region,""_"","" "")) %>%"
+"0","mutate(gbif_region = stringr::str_to_title(gbif_region)) %>%"
+"0","mutate(gbif_region = gbifapi::replace_gbif_region(gbif_region,shorten=TRUE)) %>%"
+"0","filter(!gbif_region == ""Antarctica"") %>%"
+"0","mutate(date=stringr::str_replace_all(snapshot,""occurrence_"","""")) %>%"
+"0","mutate(date=lubridate::ymd(date)) %>%"
+"0","glimpse()"
+"1","Observations: 573
+"
+"1","Variables: 6
+"
+"1","$ gbif_region [3m[90m<chr>[39m[23m ""Asia"", ""Oceania"", ""North America"", ""Europe &\nCentral Asia"", ""Africa""...
+"
+"1",""
+"1","$ num_occ     [3m[90m<dbl>[39m[23m 4414105, 5211678, 43128779, 50174096, 5627072, 9304914, 4741309, 52720...
+"
+"1",""
+"1","$ num_species [3m[90m<dbl>[39m[23m 152052, 100336, 131624, 221878, 107887, 190614, 159467, 104234, 140462...
+"
+"1",""
+"1","$ snapshot    [3m[90m<chr>[39m[23m ""occurrence_20071219"", ""occurrence_20071219"", ""occurrence_20071219"", ""...
+"
+"1",""
+"1","$ type        [3m[90m<chr>[39m[23m ""about"", ""about"", ""about"", ""about"", ""about"", ""about"", ""about"", ""about""...
+"
+"1",""
+"1","$ date        [3m[90m<date>[39m[23m 2007-12-19, 2007-12-19, 2007-12-19, 2007-12-19, 2007-12-19, 2007-12-1...
+"
+"0","d_about = d %>% "
+"0","mutate(id = paste(snapshot,gbif_region,sep=""_"")) %>%"
+"0","filter(type == ""about"") %>%"
+"0","select(id,gbif_region,date,num_occ,num_species)"
+"0",""
+"0","d_published = d %>% "
+"0","filter(type == ""published"") %>%"
+"0","rename_at(c(""num_occ"",""num_species""),function(x) paste0(x,""_published"")) %>%"
+"0","mutate(id = paste(snapshot,gbif_region,sep=""_"")) %>%"
+"0","select(id,contains(""_published"")) %>%"
+"0","glimpse() "
+"1","Observations: 285
+"
+"1","Variables: 3
+"
+"1","$ id                    [3m[90m<chr>[39m[23m ""occurrence_20071219_Asia"", ""occurrence_20071219_Oceania"", ""...
+"
+"1",""
+"1","$ num_occ_published     [3m[90m<dbl>[39m[23m 2101819, 3819715, 48530537, 50576998, 3476403, 2339822, 3820...
+"
+"1",""
+"1","$ num_species_published [3m[90m<dbl>[39m[23m 76082, 91645, 386179, 425319, 52129, 79176, 91651, 425420, 4...
+"
+"0","d = merge(d_about,d_published,id=""id"") %>%"
+"0","glimpse()"
+"1","Observations: 285
+"
+"1","Variables: 7
+"
+"1","$ id                    [3m[90m<chr>[39m[23m ""occurrence_20071219_Asia"", ""occurrence_20071219_Europe &\nC...
+"
+"1",""
+"1","$ gbif_region           [3m[90m<chr>[39m[23m ""Asia"", ""Europe &\nCentral Asia"", ""Latin America &\nThe Cari...
+"
+"1",""
+"1","$ date                  [3m[90m<date>[39m[23m 2007-12-19, 2007-12-19, 2007-12-19, 2007-12-19, 2007-12-19,...
+"
+"1",""
+"1","$ num_occ               [3m[90m<dbl>[39m[23m 4414105, 50174096, 9304914, 43128779, 5211678, 4741309, 5213...
+"
+"1",""
+"1","$ num_species           [3m[90m<dbl>[39m[23m 152052, 221878, 190614, 131624, 100336, 159467, 224987, 2012...
+"
+"1",""
+"1","$ num_occ_published     [3m[90m<dbl>[39m[23m 2101819, 50576998, 3476403, 48530537, 3819715, 2339822, 5230...
+"
+"1",""
+"1","$ num_species_published [3m[90m<dbl>[39m[23m 76082, 425319, 52129, 386179, 91645, 79176, 430798, 52795, 4...
+"
+"0","parameters = tibble::tribble("
+"0","~variable,~subtitle,~title,~unit_MK,~unit_scale,"
+"0","""num_species_published"",""Number of species published on GBIF"",""Number of Published Species"",""K"",1e-3,"
+"0","""num_species"",""Number of species about region on GBIF"",""Number of Species on GBIF"",""K"",1e-3,"
+"0","""num_occ"",""Number of Occurrences about region on GBIF"",""Number of Occurrences"",""M"",1e-6,"
+"0","""num_occ_published"",""Number of occurrences published by region on GBIF"",""Number of Published Occurrences"",""M"",1e-6"
+"0",") %>% "
+"0","purrr::transpose()"
+"0",""
+"0","parameters"
+"1","[[1]]
+"
+"1","[[1]]$variable
+"
+"1","[1]"
+"1"," ""num_species_published"""
+"1","
+"
+"1","
+"
+"1","[[1]]$subtitle
+"
+"1","[1]"
+"1"," ""Number of species published on GBIF"""
+"1","
+"
+"1","
+"
+"1","[[1]]$title
+"
+"1","[1]"
+"1"," ""Number of Published Species"""
+"1","
+"
+"1","
+"
+"1","[[1]]$unit_MK
+"
+"1","[1]"
+"1"," ""K"""
+"1","
+"
+"1","
+"
+"1","[[1]]$unit_scale
+"
+"1","[1]"
+"1"," 0.001"
+"1","
+"
+"1","
+"
+"1","
+"
+"1","[[2]]
+"
+"1","[[2]]$variable
+"
+"1","[1]"
+"1"," ""num_species"""
+"1","
+"
+"1","
+"
+"1","[[2]]$subtitle
+"
+"1","[1]"
+"1"," ""Number of species about region on GBIF"""
+"1","
+"
+"1","
+"
+"1","[[2]]$title
+"
+"1","[1]"
+"1"," ""Number of Species on GBIF"""
+"1","
+"
+"1","
+"
+"1","[[2]]$unit_MK
+"
+"1","[1]"
+"1"," ""K"""
+"1","
+"
+"1","
+"
+"1","[[2]]$unit_scale
+"
+"1","[1]"
+"1"," 0.001"
+"1","
+"
+"1","
+"
+"1","
+"
+"1","[[3]]
+"
+"1","[[3]]$variable
+"
+"1","[1]"
+"1"," ""num_occ"""
+"1","
+"
+"1","
+"
+"1","[[3]]$subtitle
+"
+"1","[1]"
+"1"," ""Number of Occurrences about region on GBIF"""
+"1","
+"
+"1","
+"
+"1","[[3]]$title
+"
+"1","[1]"
+"1"," ""Number of Occurrences"""
+"1","
+"
+"1","
+"
+"1","[[3]]$unit_MK
+"
+"1","[1]"
+"1"," ""M"""
+"1","
+"
+"1","
+"
+"1","[[3]]$unit_scale
+"
+"1","[1]"
+"1"," 1e-06"
+"1","
+"
+"1","
+"
+"1","
+"
+"1","[[4]]
+"
+"1","[[4]]$variable
+"
+"1","[1]"
+"1"," ""num_occ_published"""
+"1","
+"
+"1","
+"
+"1","[[4]]$subtitle
+"
+"1","[1]"
+"1"," ""Number of occurrences published by region on GBIF"""
+"1","
+"
+"1","
+"
+"1","[[4]]$title
+"
+"1","[1]"
+"1"," ""Number of Published Occurrences"""
+"1","
+"
+"1","
+"
+"1","[[4]]$unit_MK
+"
+"1","[1]"
+"1"," ""M"""
+"1","
+"
+"1","
+"
+"1","[[4]]$unit_scale
+"
+"1","[1]"
+"1"," 1e-06"
+"1","
+"
+"1","
+"
+"1","
+"
+"0","parameters %>%"
+"0","map(~"
+"0","gbifregionalstats::plot_time_series("
+"0","d,"
+"0","variable=.x$variable,"
+"0","ylab="""","
+"0","title=.x$title,"
+"0","subtitle=.x$subtitle,"
+"0","unit_MK = .x$unit_MK,"
+"0","unit_scale = .x$unit_scale"
+"0",")) %>% "
+"0","map2(parameters,~ {"
+"0","ggsave(paste0(path_to_plots,""time series/pdf/"",""timeseries_"",.y$variable,"".pdf""),plot=.x,width=6,height=5)"
+"0","ggsave(paste0(path_to_plots,""time series/svg/"",""timeseries_"",.y$variable,"".svg""),plot=.x,width=6,height=5)"
+"0","ggsave(paste0(path_to_plots,""time series/jpg/"",""timeseries_"",.y$variable,"".jpg""),plot=.x,width=6,height=5,dpi=600)"
+"0","})"
+"1","Observations: 285
+"
+"1","Variables: 7
+"
+"1","$ id                    [3m[90m<chr>[39m[23m ""occurrence_20071219_Asia"", ""occurrence_20071219_Europe &\nC...
+"
+"1",""
+"1","$ gbif_region           [3m[90m<chr>[39m[23m ""Asia"", ""Europe &\nCentral Asia"", ""Latin America &\nThe Cari...
+"
+"1",""
+"1","$ date                  [3m[90m<date>[39m[23m 2007-12-19, 2007-12-19, 2007-12-19, 2007-12-19, 2007-12-19,...
+"
+"1",""
+"1","$ num_occ               [3m[90m<dbl>[39m[23m 4414105, 50174096, 9304914, 43128779, 5211678, 4741309, 5213...
+"
+"1",""
+"1","$ num_species           [3m[90m<dbl>[39m[23m 152052, 221878, 190614, 131624, 100336, 159467, 224987, 2012...
+"
+"1",""
+"1","$ num_occ_published     [3m[90m<dbl>[39m[23m 2101819, 50576998, 3476403, 48530537, 3819715, 2339822, 5230...
+"
+"1",""
+"1","$ num_species_published [3m[90m<dbl>[39m[23m 76082, 425319, 52129, 386179, 91645, 79176, 430798, 52795, 4...
+"
+"1","Observations: 285
+"
+"1","Variables: 7
+"
+"1","$ id                    [3m[90m<chr>[39m[23m ""occurrence_20071219_Asia"", ""occurrence_20071219_Europe &\nC...
+"
+"1",""
+"1","$ gbif_region           [3m[90m<chr>[39m[23m ""Asia"", ""Europe &\nCentral Asia"", ""Latin America &\nThe Cari...
+"
+"1",""
+"1","$ date                  [3m[90m<date>[39m[23m 2007-12-19, 2007-12-19, 2007-12-19, 2007-12-19, 2007-12-19,...
+"
+"1",""
+"1","$ num_occ               [3m[90m<dbl>[39m[23m 4414105, 50174096, 9304914, 43128779, 5211678, 4741309, 5213...
+"
+"1",""
+"1","$ num_species           [3m[90m<dbl>[39m[23m 152052, 221878, 190614, 131624, 100336, 159467, 224987, 2012...
+"
+"1",""
+"1","$ num_occ_published     [3m[90m<dbl>[39m[23m 2101819, 50576998, 3476403, 48530537, 3819715, 2339822, 5230...
+"
+"1",""
+"1","$ num_species_published [3m[90m<dbl>[39m[23m 76082, 425319, 52129, 386179, 91645, 79176, 430798, 52795, 4...
+"
+"1","Observations: 285
+"
+"1","Variables: 7
+"
+"1","$ id                    [3m[90m<chr>[39m[23m ""occurrence_20071219_Asia"", ""occurrence_20071219_Europe &\nC...
+"
+"1",""
+"1","$ gbif_region           [3m[90m<chr>[39m[23m ""Asia"", ""Europe &\nCentral Asia"", ""Latin America &\nThe Cari...
+"
+"1",""
+"1","$ date                  [3m[90m<date>[39m[23m 2007-12-19, 2007-12-19, 2007-12-19, 2007-12-19, 2007-12-19,...
+"
+"1",""
+"1","$ num_occ               [3m[90m<dbl>[39m[23m 4414105, 50174096, 9304914, 43128779, 5211678, 4741309, 5213...
+"
+"1",""
+"1","$ num_species           [3m[90m<dbl>[39m[23m 152052, 221878, 190614, 131624, 100336, 159467, 224987, 2012...
+"
+"1",""
+"1","$ num_occ_published     [3m[90m<dbl>[39m[23m 2101819, 50576998, 3476403, 48530537, 3819715, 2339822, 5230...
+"
+"1",""
+"1","$ num_species_published [3m[90m<dbl>[39m[23m 76082, 425319, 52129, 386179, 91645, 79176, 430798, 52795, 4...
+"
+"1","Observations: 285
+"
+"1","Variables: 7
+"
+"1","$ id                    [3m[90m<chr>[39m[23m ""occurrence_20071219_Asia"", ""occurrence_20071219_Europe &\nC...
+"
+"1",""
+"1","$ gbif_region           [3m[90m<chr>[39m[23m ""Asia"", ""Europe &\nCentral Asia"", ""Latin America &\nThe Cari...
+"
+"1",""
+"1","$ date                  [3m[90m<date>[39m[23m 2007-12-19, 2007-12-19, 2007-12-19, 2007-12-19, 2007-12-19,...
+"
+"1",""
+"1","$ num_occ               [3m[90m<dbl>[39m[23m 4414105, 50174096, 9304914, 43128779, 5211678, 4741309, 5213...
+"
+"1",""
+"1","$ num_species           [3m[90m<dbl>[39m[23m 152052, 221878, 190614, 131624, 100336, 159467, 224987, 2012...
+"
+"1",""
+"1","$ num_occ_published     [3m[90m<dbl>[39m[23m 2101819, 50576998, 3476403, 48530537, 3819715, 2339822, 5230...
+"
+"1",""
+"1","$ num_species_published [3m[90m<dbl>[39m[23m 76082, 425319, 52129, 386179, 91645, 79176, 430798, 52795, 4...
+"
+"1","[[1]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[2]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[3]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[4]]
+"
+"1","NULL
+"
+"1","
+"

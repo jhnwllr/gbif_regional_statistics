@@ -1,0 +1,112 @@
+"0",""
+"0","# https://gbif.app.box.com/file/654360325444 Link to Marie's script to generate data "
+"0","# installations exploration"
+"0","library(dplyr)"
+"0","library(purrr)"
+"0",""
+"0","path = ""C:/Users/ftw712/Desktop/"""
+"0",""
+"0","d = readxl::read_excel("
+"0","paste0(path,""gbif_regional_statistics/data/information_installations_per_region_nodes_2020-03-05.xlsx""),"
+"0","sheet = ""ENDOSING NODE"") %>% "
+"0","janitor::clean_names() %>%"
+"0","mutate(number_of_installations_with_some_failed_ingestion = as.numeric(number_of_installations_with_some_failed_ingestion)) %>% "
+"0","merge(gbifapi::get_nodes_data(),id=""node_title"") %>%"
+"0","mutate(number_of_installations_with_some_failed_ingestion) %>%"
+"0","tidyr::pivot_longer(contains(""number_of_"")) %>%"
+"0","filter(!name == ""number_of_installations"") %>%"
+"0","filter(!value == 0) %>%"
+"0","mutate(name = stringr::str_replace_all(name,""number_of_installations_with_"","""")) %>%"
+"0","mutate(name = stringr::str_replace_all(name,""no_failed_ingestion"",""Healthy"")) %>%"
+"0","mutate(name = stringr::str_replace_all(name,""only_failed_ingestion"",""Always Failed Ingestion"")) %>%"
+"0","mutate(name = stringr::str_replace_all(name,""some_failed_ingestion"",""Some Failed Ingestion"")) %>%"
+"0","mutate(name = stringr::str_replace_all(name,""no_datasets"",""No Datasets"")) %>%"
+"0","group_by(node_title) %>%"
+"0","mutate(total_installations = sum(value)) %>%"
+"0","ungroup() %>%"
+"0","group_by(gbif_region) %>% "
+"0","mutate(total_installations_region = max(value)) %>%"
+"0","ungroup() "
+"0",""
+"0","# path_to_plots = ""C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/"""
+"0",""
+"0","p = gbifregionalstats::plot_network_health("
+"0","d,"
+"0","legend_position = c(0.78,1.08),"
+"0","title_hjust=-0.5655,"
+"0","subtitle_hjust=-1.165,"
+"0","type = ""COUNTRY"")"
+"1","Observations: 116
+"
+"1","Variables: 9
+"
+"1","$ node_title                 [3m[90m<fct>[39m[23m Atlas of Living Australi...
+"
+"1",""
+"1","$ gbif_region                [3m[90m<fct>[39m[23m OCEANIA, OCEANIA, EUROPE...
+"
+"1",""
+"1","$ participation_status       [3m[90m<chr>[39m[23m ""VOTING"", ""VOTING"", ""VOT...
+"
+"1",""
+"1","$ type                       [3m[90m<chr>[39m[23m ""COUNTRY"", ""COUNTRY"", ""C...
+"
+"1",""
+"1","$ country                    [3m[90m<chr>[39m[23m ""AU"", ""AU"", ""BE"", ""BE"", ...
+"
+"1",""
+"1","$ name                       [3m[90m<fct>[39m[23m No Datasets, Healthy, No...
+"
+"1",""
+"1","$ value                      [3m[90m<dbl>[39m[23m 2, 5, 3, 1, 11, 1, 3, 1,...
+"
+"1",""
+"1","$ total_installations        [3m[90m<dbl>[39m[23m 7, 7, 15, 15, 15, 4, 4, ...
+"
+"1",""
+"1","$ total_installations_region [3m[90m<dbl>[39m[23m 7, 7, 27, 27, 27, 11, 11...
+"
+"0","ggsave(paste0(path_to_plots,""network health/pdf/network_health_country.pdf""),plot=p,width=7,height=10)"
+"0","ggsave(paste0(path_to_plots,""network health/svg/network_health_country.svg""),plot=p,width=7,height=10)"
+"0","ggsave(paste0(path_to_plots,""network health/jpg/network_health_country.jpg""),plot=p,width=7,height=10,dpi=1200)"
+"0",""
+"0","p = gbifregionalstats::plot_network_health("
+"0","d,"
+"0","legend_position = c(0.75,1.08),"
+"0","title_hjust=-0.98,"
+"0","subtitle_hjust=-3.465,"
+"0","type = ""OTHER"""
+"0",")"
+"1","Observations: 43
+"
+"1","Variables: 9
+"
+"1","$ node_title                 [3m[90m<fct>[39m[23m Albertine Rift Conservat...
+"
+"1",""
+"1","$ gbif_region                [3m[90m<fct>[39m[23m AFRICA, ASIA, EUROPE, AS...
+"
+"1",""
+"1","$ participation_status       [3m[90m<chr>[39m[23m ""ASSOCIATE"", ""ASSOCIATE""...
+"
+"1",""
+"1","$ type                       [3m[90m<chr>[39m[23m ""OTHER"", ""OTHER"", ""OTHER...
+"
+"1",""
+"1","$ country                    [3m[90m<chr>[39m[23m ""UG"", ""PH"", ""DE"", ""MY"", ...
+"
+"1",""
+"1","$ name                       [3m[90m<fct>[39m[23m Healthy, Healthy, Health...
+"
+"1",""
+"1","$ value                      [3m[90m<dbl>[39m[23m 1, 3, 3, 1, 1, 1, 1, 2, ...
+"
+"1",""
+"1","$ total_installations        [3m[90m<dbl>[39m[23m 1, 3, 3, 1, 1, 2, 2, 2, ...
+"
+"1",""
+"1","$ total_installations_region [3m[90m<dbl>[39m[23m 1, 3, 13, 3, 3, 13, 13, ...
+"
+"0","ggsave(paste0(path_to_plots,""network health/pdf/network_health_other.pdf""),plot=p,width=7,height=10)"
+"0","ggsave(paste0(path_to_plots,""network health/svg/network_health_other.svg""),plot=p,width=7,height=10)"
+"0","ggsave(paste0(path_to_plots,""network health/jpg/network_health_other.jpg""),plot=p,width=7,height=10,dpi=600)"

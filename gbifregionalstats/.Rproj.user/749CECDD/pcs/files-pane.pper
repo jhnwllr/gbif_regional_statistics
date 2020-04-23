@@ -1,0 +1,13 @@
+{
+    "path" : "C:/Users/ftw712/Desktop/gbif_regional_statistics/gbifregionalstats/R",
+    "sortOrder" : [
+        {
+            "ascending" : false,
+            "columnIndex" : 4
+        },
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}

@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1587392884307.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "1097ABB9",
+    "lastKnownWriteTime" : 1587549177,
+    "last_content_update" : 1587549177784,
+    "path" : "C:/Users/ftw712/Desktop/gbif_regional_statistics/gbifregionalstats/R/stacked_bar_facet.R",
+    "project_path" : "R/stacked_bar_facet.R",
+    "properties" : {
+        "cursorPosition" : "92,36",
+        "scrollLine" : "81",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 9,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

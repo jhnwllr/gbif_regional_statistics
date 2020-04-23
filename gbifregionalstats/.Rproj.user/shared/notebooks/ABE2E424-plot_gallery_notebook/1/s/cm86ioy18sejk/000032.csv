@@ -1,0 +1,27 @@
+"1","Observations: 4
+"
+"1","Variables: 8
+"
+"1","$ title                   [3m[90m<chr>[39m[23m ""Canada"", ""Canada"", ""United States of America"", ""United States of...
+"
+"1",""
+"1","$ date                    [3m[90m<chr>[39m[23m ""2015-01-19"", ""2020-01-01"", ""2015-01-19"", ""2020-01-01""
+"
+"1",""
+"1","$ occ_count               [3m[90m<dbl>[39m[23m 17759552, 70816353, 166044872, 461078300
+"
+"1",""
+"1","$ species_count           [3m[90m<dbl>[39m[23m 59102, 83198, 243283, 300913
+"
+"1",""
+"1","$ occ_count_published     [3m[90m<dbl>[39m[23m 4450427, 64729626, 209917652, 489705084
+"
+"1",""
+"1","$ species_count_published [3m[90m<dbl>[39m[23m 86987, 124170, 778862, 996402
+"
+"1",""
+"1","$ order_variable          [3m[90m<dbl>[39m[23m 124170, 124170, 996402, 996402
+"
+"1",""
+"1","$ title_                  [3m[90m<fct>[39m[23m Canada, Canada, United States of America, United States of America
+"

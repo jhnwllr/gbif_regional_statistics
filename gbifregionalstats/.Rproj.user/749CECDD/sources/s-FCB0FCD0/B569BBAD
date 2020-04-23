@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1585660760398.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "17|74|66|0|\n73|36|132|0|\n200|36|247|0|\n319|36|391|0|\n463|36|536|0|\n756|36|848|0|\n",
+    "hash" : "0",
+    "id" : "B569BBAD",
+    "lastKnownWriteTime" : 1587630058,
+    "last_content_update" : 1587630197808,
+    "path" : "C:/Users/ftw712/Desktop/gbif_regional_statistics/gbifregionalstats/plot_gallery_notebook.rmd",
+    "project_path" : "plot_gallery_notebook.rmd",
+    "properties" : {
+        "cursorPosition" : "139,81",
+        "scrollLine" : "16",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

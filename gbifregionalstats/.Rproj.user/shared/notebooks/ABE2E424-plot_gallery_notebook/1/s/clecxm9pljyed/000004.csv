@@ -1,0 +1,119 @@
+"0","library(tmap)"
+"0","library(dplyr)"
+"0","data(""World"") "
+"0",""
+"0",""
+"0","d = World %>% "
+"0","mutate(iso3 = iso_a3) %>%"
+"0","merge(gbifapi::get_gbif_countries(),id=""iso3"") %>% "
+"0","janitor::clean_names() %>%"
+"0","mutate(`GBIF Region` = gbifapi::replace_gbif_region(gbif_region)) %>%"
+"0","mutate(`GBIF Region` = forcats::fct_relevel(`GBIF Region`,"
+"0","c("
+"0","""Europe and Central Asia"","
+"0","""North America"","
+"0","""Asia"","
+"0","""Latin America and The Caribbean"","
+"0","""Africa"","
+"0","""Oceania"","
+"0","""Antarctica"""
+"0","))) %>%"
+"0","glimpse() "
+"1","Observations: 174
+"
+"1","Variables: 23
+"
+"1","$ iso3          [3m[38;5;246m<fct>[39m[23m AFG, AGO, ALB, ARE, ARG, ARM, ATA, ATF, AUS, AUT,...
+"
+"1",""
+"1","$ iso_a3        [3m[38;5;246m<fct>[39m[23m AFG, AGO, ALB, ARE, ARG, ARM, ATA, ATF, AUS, AUT,...
+"
+"1",""
+"1","$ name          [3m[38;5;246m<fct>[39m[23m Afghanistan, Angola, Albania, United Arab Emirate...
+"
+"1",""
+"1","$ sovereignt    [3m[38;5;246m<fct>[39m[23m Afghanistan, Angola, Albania, United Arab Emirate...
+"
+"1",""
+"1","$ continent     [3m[38;5;246m<fct>[39m[23m Asia, Africa, Europe, Asia, South America, Asia, ...
+"
+"1",""
+"1","$ area          [3m[38;5;246m<S3: units>[39m[23m 652860.000 [km^2], 1246700.000 [km^2], 2740...
+"
+"1",""
+"1","$ pop_est       [3m[38;5;246m<dbl>[39m[23m 28400000, 12799293, 3639453, 4798491, 40913584, 2...
+"
+"1",""
+"1","$ pop_est_dens  [3m[38;5;246m<dbl>[39m[23m 4.350090e+01, 1.026654e+01, 1.328268e+02, 6.73451...
+"
+"1",""
+"1","$ economy       [3m[38;5;246m<fct>[39m[23m 7. Least developed region, 7. Least developed reg...
+"
+"1",""
+"1","$ income_grp    [3m[38;5;246m<fct>[39m[23m 5. Low income, 3. Upper middle income, 4. Lower m...
+"
+"1",""
+"1","$ gdp_cap_est   [3m[38;5;246m<dbl>[39m[23m 784.1549, 8617.6635, 5992.6588, 38407.9078, 14027...
+"
+"1",""
+"1","$ life_exp      [3m[38;5;246m<dbl>[39m[23m 59.668, NA, 77.347, NA, 75.927, 74.446, NA, NA, 8...
+"
+"1",""
+"1","$ well_being    [3m[38;5;246m<dbl>[39m[23m 3.800000, NA, 5.500000, NA, 6.500000, 4.300000, N...
+"
+"1",""
+"1","$ footprint     [3m[38;5;246m<dbl>[39m[23m 0.79000, NA, 2.21000, NA, 3.14000, 2.23000, NA, N...
+"
+"1",""
+"1","$ inequality    [3m[38;5;246m<dbl>[39m[23m 0.42655744, NA, 0.16513372, NA, 0.16423830, 0.216...
+"
+"1",""
+"1","$ hpi           [3m[38;5;246m<dbl>[39m[23m 20.22535, NA, 36.76687, NA, 35.19024, 25.66642, N...
+"
+"1",""
+"1","$ enum_name     [3m[38;5;246m<chr>[39m[23m ""AFGHANISTAN"", ""ANGOLA"", ""ALBANIA"", ""UNITED_ARAB_...
+"
+"1",""
+"1","$ gbif_region   [3m[38;5;246m<chr>[39m[23m ""ASIA"", ""AFRICA"", ""EUROPE"", ""ASIA"", ""LATIN_AMERIC...
+"
+"1",""
+"1","$ iso2          [3m[38;5;246m<chr>[39m[23m ""AF"", ""AO"", ""AL"", ""AE"", ""AR"", ""AM"", ""AQ"", ""TF"", ""...
+"
+"1",""
+"1","$ iso_numerical [3m[38;5;246m<chr>[39m[23m ""4"", ""24"", ""8"", ""784"", ""32"", ""51"", ""10"", ""260"", ""...
+"
+"1",""
+"1","$ title         [3m[38;5;246m<chr>[39m[23m ""Afghanistan"", ""Angola"", ""Albania"", ""United Arab ...
+"
+"1",""
+"1","$ geometry      [3m[38;5;246m<MULTIPOLYGON [m]>[39m[23m MULTIPOLYGON (((5310471 451..., MULT...
+"
+"1",""
+"1","$ `GBIF Region` [3m[38;5;246m<fct>[39m[23m Asia, Africa, Europe and Central Asia, Asia, Lati...
+"
+"0","region_colors = c("
+"0","""Europe and Central Asia"" = ""#509E2F"","
+"0","""North America"" = ""#FDAF02"","
+"0","""Oceania"" = ""#D66F27"","
+"0","""Asia"" = ""#ffcccc"","
+"0","""Latin America and The Caribbean"" = ""#40BFFF"","
+"0","""Africa"" = ""#ff4c4d"","
+"0","""Antarctica"" = ""gray"""
+"0",")"
+"0",""
+"0","tm = tm_shape(d) +"
+"0","tm_polygons(""GBIF Region"","
+"0","palette = region_colors) +"
+"0","tm_layout("""","
+"0","          legend.title.size = 1.5,"
+"0","          legend.text.size = 1,"
+"0","          legend.position = c(""left"",""bottom""),"
+"0","          legend.bg.color = NA,"
+"0","          legend.bg.alpha = 1)"
+"0",""
+"0","# path_to_plots = ""C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/"""
+"0","		  "
+"0","tmap_save(tm,filename=paste0(path_to_plots,""gbif region map/pdf/gbif_region_map.pdf""))"
+"0","tmap_save(tm,filename=paste0(path_to_plots,""gbif region map/jpg/gbif_region_map.jpg""))"
+"0","tmap_save(tm,filename=paste0(path_to_plots,""gbif region map/svg/gbif_region_map.svg""))"
+"0",""

@@ -1,0 +1,618 @@
+"0",""
+"0","if(FALSE) { # process occ by GDP/ Population size "
+"0",""
+"0","library(wbstats)"
+"0","library(dplyr)"
+"0",""
+"0","d_gbif = readr::read_tsv(""http://download.gbif.org/custom_download/jwaller/country_counts_time_series.tsv"") %>%"
+"0","filter(snapshot == ""occurrence_20200101"") %>% "
+"0","mutate(row = row_number()) %>%"
+"0","tidyr::pivot_wider(names_from = c(type), values_from = c(occ_count,species_count)) %>%"
+"0","mutate(iso2 = country)"
+"0",""
+"0","d_country = "
+"0","gbifapi::get_gbif_countries() %>% "
+"0","pull(iso2) %>%"
+"0","wb(country = ., "
+"0","indicator = c(""SP.POP.TOTL"",""NY.GDP.MKTP.CD"",""NY.GDP.PCAP.CD"",""AG.LND.TOTL.K2""),"
+"0","startdate = 2018, enddate = 2019) %>% "
+"0","select(iso2 = iso2c,indicator,value) %>% "
+"0","tidyr::pivot_wider(names_from = indicator, values_from = value) %>% "
+"0","merge(gbifapi::get_gbif_countries(),id=""iso2"") %>% "
+"0","janitor::clean_names() %>%"
+"0","mutate(gbif_region = stringr::str_replace_all(gbif_region,""_"","" "")) %>%"
+"0","mutate(gbif_region = stringr::str_to_title(gbif_region)) %>%"
+"0","filter(!gbif_region == ""Antarctica"") "
+"0",""
+"0","d = merge(d_country, d_gbif, id=""iso2"") %>% "
+"0","select("
+"0","iso2,"
+"0","title,"
+"0","gbif_region,"
+"0","occ_count_about,"
+"0","occ_count_published,"
+"0","species_count_about,"
+"0","species_count_published,"
+"0","population_total,"
+"0","gdp_current_us,"
+"0","gdp_per_capita_current_us,"
+"0","land_area_sq_km"
+"0",") %>%"
+"0","glimpse() %>%"
+"0","saveRDS(""C:/Users/ftw712/Desktop/d.rda"")"
+"0","}"
+"0",""
+"0",""
+"0","library(dplyr)"
+"0","library(purrr)"
+"0",""
+"0","d = readRDS(""C:/Users/ftw712/Desktop/d.rda"") %>% "
+"0","filter(taxonkey == 212) %>% "
+"0","glimpse() %>%"
+"0","mutate(num_occ_published_birds = num_of_occ_published) %>%"
+"0","mutate(num_occ_published_nobirds = occ_published_total - num_occ_published_birds) %>%"
+"0","glimpse() %>% "
+"0","filter(num_occ_published_nobirds > 50e3) %>% # only with 50K occurrences"
+"0","filter(occ_published_total > 50e3) %>% # only with 50K occurrences"
+"0","filter(land_area_sq_km > 10e3) %>%"
+"0","filter(gdp_per_capita_current_us > 500) %>% "
+"0","glimpse() %>%"
+"0","select(iso2,title,gbif_region,occ_published_total,num_occ_published_nobirds,land_area_sq_km,gdp_current_us,gdp_per_capita_current_us,population_total) %>%"
+"0","na.omit() "
+"1","Observations: 214
+"
+"1","Variables: 16
+"
+"1","$ iso2                      [3m[38;5;246m<chr>[39m[23m ""AD"", ""AE"", ""AF"", ""AG"", ""AL"", ""AM"", ""...
+"
+"1",""
+"1","$ title                     [3m[38;5;246m<chr>[39m[23m ""Andorra"", ""United Arab Emirates"", ""A...
+"
+"1",""
+"1","$ gbif_region               [3m[38;5;246m<chr>[39m[23m ""Europe"", ""Asia"", ""Asia"", ""Latin Amer...
+"
+"1",""
+"1","$ countrycode               [3m[38;5;246m<chr>[39m[23m ""AD"", ""AE"", ""AF"", ""AG"", ""AL"", ""AM"", ""...
+"
+"1",""
+"1","$ publishingcountry         [3m[38;5;246m<chr>[39m[23m ""AD"", ""AE"", ""AF"", ""AG"", ""AL"", ""AM"", ""...
+"
+"1",""
+"1","$ taxonkey                  [3m[38;5;246m<dbl>[39m[23m 212, 212, 212, 212, 212, 212, 212, 21...
+"
+"1",""
+"1","$ num_species_published     [3m[38;5;246m<dbl>[39m[23m 165, 461, 261, 122, 276, 293, 810, 14...
+"
+"1",""
+"1","$ num_of_occ_published      [3m[38;5;246m<dbl>[39m[23m 24837, 676533, 9374, 14767, 5031, 101...
+"
+"1",""
+"1","$ occ_published_total       [3m[38;5;246m<dbl>[39m[23m 113290, 676533, 9374, 14767, 5031, 10...
+"
+"1",""
+"1","$ species_published_total   [3m[38;5;246m<dbl>[39m[23m 4105, 461, 261, 122, 276, 293, 1247, ...
+"
+"1",""
+"1","$ occ_total                 [3m[38;5;246m<dbl>[39m[23m 132769, 697743, 531738, 36400, 31012,...
+"
+"1",""
+"1","$ species_total             [3m[38;5;246m<dbl>[39m[23m 5233, 3418, 11481, 3565, 4659, 7222, ...
+"
+"1",""
+"1","$ population_total          [3m[38;5;246m<dbl>[39m[23m 77006, 9630959, 37172386, 96286, 2866...
+"
+"1",""
+"1","$ gdp_current_us            [3m[38;5;246m<dbl>[39m[23m 3.236544e+09, 4.141789e+11, 1.936297e...
+"
+"1",""
+"1","$ gdp_per_capita_current_us [3m[38;5;246m<dbl>[39m[23m 42029.7627, 43004.9534, 520.8966, 167...
+"
+"1",""
+"1","$ land_area_sq_km           [3m[38;5;246m<dbl>[39m[23m 470, 71020, 652860, 440, 27400, 28470...
+"
+"1","Observations: 214
+"
+"1","Variables: 18
+"
+"1","$ iso2                      [3m[38;5;246m<chr>[39m[23m ""AD"", ""AE"", ""AF"", ""AG"", ""AL"", ""AM"", ""...
+"
+"1",""
+"1","$ title                     [3m[38;5;246m<chr>[39m[23m ""Andorra"", ""United Arab Emirates"", ""A...
+"
+"1",""
+"1","$ gbif_region               [3m[38;5;246m<chr>[39m[23m ""Europe"", ""Asia"", ""Asia"", ""Latin Amer...
+"
+"1",""
+"1","$ countrycode               [3m[38;5;246m<chr>[39m[23m ""AD"", ""AE"", ""AF"", ""AG"", ""AL"", ""AM"", ""...
+"
+"1",""
+"1","$ publishingcountry         [3m[38;5;246m<chr>[39m[23m ""AD"", ""AE"", ""AF"", ""AG"", ""AL"", ""AM"", ""...
+"
+"1",""
+"1","$ taxonkey                  [3m[38;5;246m<dbl>[39m[23m 212, 212, 212, 212, 212, 212, 212, 21...
+"
+"1",""
+"1","$ num_species_published     [3m[38;5;246m<dbl>[39m[23m 165, 461, 261, 122, 276, 293, 810, 14...
+"
+"1",""
+"1","$ num_of_occ_published      [3m[38;5;246m<dbl>[39m[23m 24837, 676533, 9374, 14767, 5031, 101...
+"
+"1",""
+"1","$ occ_published_total       [3m[38;5;246m<dbl>[39m[23m 113290, 676533, 9374, 14767, 5031, 10...
+"
+"1",""
+"1","$ species_published_total   [3m[38;5;246m<dbl>[39m[23m 4105, 461, 261, 122, 276, 293, 1247, ...
+"
+"1",""
+"1","$ occ_total                 [3m[38;5;246m<dbl>[39m[23m 132769, 697743, 531738, 36400, 31012,...
+"
+"1",""
+"1","$ species_total             [3m[38;5;246m<dbl>[39m[23m 5233, 3418, 11481, 3565, 4659, 7222, ...
+"
+"1",""
+"1","$ population_total          [3m[38;5;246m<dbl>[39m[23m 77006, 9630959, 37172386, 96286, 2866...
+"
+"1",""
+"1","$ gdp_current_us            [3m[38;5;246m<dbl>[39m[23m 3.236544e+09, 4.141789e+11, 1.936297e...
+"
+"1",""
+"1","$ gdp_per_capita_current_us [3m[38;5;246m<dbl>[39m[23m 42029.7627, 43004.9534, 520.8966, 167...
+"
+"1",""
+"1","$ land_area_sq_km           [3m[38;5;246m<dbl>[39m[23m 470, 71020, 652860, 440, 27400, 28470...
+"
+"1",""
+"1","$ num_occ_published_birds   [3m[38;5;246m<dbl>[39m[23m 24837, 676533, 9374, 14767, 5031, 101...
+"
+"1",""
+"1","$ num_occ_published_nobirds [3m[38;5;246m<dbl>[39m[23m 88453, 0, 0, 0, 0, 0, 48269, 1227229,...
+"
+"1","Observations: 53
+"
+"1","Variables: 18
+"
+"1","$ iso2                      [3m[38;5;246m<chr>[39m[23m ""AR"", ""AT"", ""AU"", ""BE"", ""BG"", ""BJ"", ""...
+"
+"1",""
+"1","$ title                     [3m[38;5;246m<chr>[39m[23m ""Argentina"", ""Austria"", ""Australia"", ...
+"
+"1",""
+"1","$ gbif_region               [3m[38;5;246m<chr>[39m[23m ""Latin America"", ""Europe"", ""Oceania"",...
+"
+"1",""
+"1","$ countrycode               [3m[38;5;246m<chr>[39m[23m ""AR"", ""AT"", ""AU"", ""BE"", ""BG"", ""BJ"", ""...
+"
+"1",""
+"1","$ publishingcountry         [3m[38;5;246m<chr>[39m[23m ""AR"", ""AT"", ""AU"", ""BE"", ""BG"", ""BJ"", ""...
+"
+"1",""
+"1","$ taxonkey                  [3m[38;5;246m<dbl>[39m[23m 212, 212, 212, 212, 212, 212, 212, 21...
+"
+"1",""
+"1","$ num_species_published     [3m[38;5;246m<dbl>[39m[23m 1437, 922, 1757, 6067, 359, 605, 2771...
+"
+"1",""
+"1","$ num_of_occ_published      [3m[38;5;246m<dbl>[39m[23m 3039141, 702186, 49735975, 23877227, ...
+"
+"1",""
+"1","$ occ_published_total       [3m[38;5;246m<dbl>[39m[23m 4266370, 3850648, 80391315, 39817252,...
+"
+"1",""
+"1","$ species_published_total   [3m[38;5;246m<dbl>[39m[23m 58811, 97665, 130244, 177012, 7187, 5...
+"
+"1",""
+"1","$ occ_total                 [3m[38;5;246m<dbl>[39m[23m 4971530, 3729534, 90628167, 36219477,...
+"
+"1",""
+"1","$ species_total             [3m[38;5;246m<dbl>[39m[23m 50853, 46136, 144337, 43558, 13596, 7...
+"
+"1",""
+"1","$ population_total          [3m[38;5;246m<dbl>[39m[23m 44494502, 8847037, 24992369, 11422068...
+"
+"1",""
+"1","$ gdp_current_us            [3m[38;5;246m<dbl>[39m[23m 5.198715e+11, 4.552858e+11, 1.433904e...
+"
+"1",""
+"1","$ gdp_per_capita_current_us [3m[38;5;246m<dbl>[39m[23m 11683.9496, 51461.9548, 57373.6867, 4...
+"
+"1",""
+"1","$ land_area_sq_km           [3m[38;5;246m<dbl>[39m[23m 2736690, 82523, 7692020, 30280, 10856...
+"
+"1",""
+"1","$ num_occ_published_birds   [3m[38;5;246m<dbl>[39m[23m 3039141, 702186, 49735975, 23877227, ...
+"
+"1",""
+"1","$ num_occ_published_nobirds [3m[38;5;246m<dbl>[39m[23m 1227229, 3148462, 30655340, 15940025,...
+"
+"0","parameters_1 = tibble("
+"0","variable = ""occ_published_total"","
+"0","gdp_variable = ""gdp_per_capita_current_us"","
+"0","title = ""Number of Occurrences Published"","
+"0","subtitle = ""published occurrences after controlling for country GDP"","
+"0","full_model = c(TRUE,FALSE)"
+"0",") "
+"0",""
+"0","parameters_2 = tibble("
+"0","variable = ""num_occ_published_nobirds"","
+"0","gdp_variable = ""gdp_per_capita_current_us"","
+"0","title = ""Number of Non-Bird Occurrences Published"","
+"0","subtitle = ""published occurrences after controlling for country GDP"","
+"0","full_model = c(TRUE,FALSE)"
+"0",")"
+"0",""
+"0","parameters = rbind(parameters_1,parameters_2) %>%"
+"0","purrr::transpose() "
+"0",""
+"0","parameters"
+"1","[[1]]
+"
+"1","[[1]]$variable
+"
+"1","[1]"
+"1"," ""occ_published_total"""
+"1","
+"
+"1","
+"
+"1","[[1]]$gdp_variable
+"
+"1","[1]"
+"1"," ""gdp_per_capita_current_us"""
+"1","
+"
+"1","
+"
+"1","[[1]]$title
+"
+"1","[1]"
+"1"," ""Number of Occurrences Published"""
+"1","
+"
+"1","
+"
+"1","[[1]]$subtitle
+"
+"1","[1]"
+"1"," ""published occurrences after controlling for country GDP"""
+"1","
+"
+"1","
+"
+"1","[[1]]$full_model
+"
+"1","[1]"
+"1"," TRUE"
+"1","
+"
+"1","
+"
+"1","
+"
+"1","[[2]]
+"
+"1","[[2]]$variable
+"
+"1","[1]"
+"1"," ""occ_published_total"""
+"1","
+"
+"1","
+"
+"1","[[2]]$gdp_variable
+"
+"1","[1]"
+"1"," ""gdp_per_capita_current_us"""
+"1","
+"
+"1","
+"
+"1","[[2]]$title
+"
+"1","[1]"
+"1"," ""Number of Occurrences Published"""
+"1","
+"
+"1","
+"
+"1","[[2]]$subtitle
+"
+"1","[1]"
+"1"," ""published occurrences after controlling for country GDP"""
+"1","
+"
+"1","
+"
+"1","[[2]]$full_model
+"
+"1","[1]"
+"1"," FALSE"
+"1","
+"
+"1","
+"
+"1","
+"
+"1","[[3]]
+"
+"1","[[3]]$variable
+"
+"1","[1]"
+"1"," ""num_occ_published_nobirds"""
+"1","
+"
+"1","
+"
+"1","[[3]]$gdp_variable
+"
+"1","[1]"
+"1"," ""gdp_per_capita_current_us"""
+"1","
+"
+"1","
+"
+"1","[[3]]$title
+"
+"1","[1]"
+"1"," ""Number of Non-Bird Occurrences Published"""
+"1","
+"
+"1","
+"
+"1","[[3]]$subtitle
+"
+"1","[1]"
+"1"," ""published occurrences after controlling for country GDP"""
+"1","
+"
+"1","
+"
+"1","[[3]]$full_model
+"
+"1","[1]"
+"1"," TRUE"
+"1","
+"
+"1","
+"
+"1","
+"
+"1","[[4]]
+"
+"1","[[4]]$variable
+"
+"1","[1]"
+"1"," ""num_occ_published_nobirds"""
+"1","
+"
+"1","
+"
+"1","[[4]]$gdp_variable
+"
+"1","[1]"
+"1"," ""gdp_per_capita_current_us"""
+"1","
+"
+"1","
+"
+"1","[[4]]$title
+"
+"1","[1]"
+"1"," ""Number of Non-Bird Occurrences Published"""
+"1","
+"
+"1","
+"
+"1","[[4]]$subtitle
+"
+"1","[1]"
+"1"," ""published occurrences after controlling for country GDP"""
+"1","
+"
+"1","
+"
+"1","[[4]]$full_model
+"
+"1","[1]"
+"1"," FALSE"
+"1","
+"
+"1","
+"
+"1","
+"
+"0","# path_to_plots = ""C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/"""
+"0",""
+"0","parameters %>%  "
+"0","map(~"
+"0","gbifregionalstats::gdp_plot("
+"0","variable = .x$variable,"
+"0","gdp_variable = .x$gdp_variable,"
+"0","title = .x$title,"
+"0","subtitle = .x$subtitle,"
+"0","full_model = .x$full_model"
+"0",")) %>%"
+"0","map2(parameters,~{"
+"0","ggsave(paste0(path_to_plots,""gdp plots/pdf/"",.y$gdp_variable,""_"",.y$variable,""_full_model_"",.y$full_model,"".pdf""),plot=.x,width=9,height=6)"
+"0","ggsave(paste0(path_to_plots,""gdp plots/svg/"",.y$gdp_variable,""_"",.y$variable,""_full_model_"",.y$full_model,"".svg""),plot=.x,width=9,height=6)"
+"0","ggsave(paste0(path_to_plots,""gdp plots/jpg/"",.y$gdp_variable,""_"",.y$variable,""_full_model_"",.y$full_model,"".jpg""),plot=.x,dpi=1200,width=9,height=6)"
+"0","})"
+"1","Observations: 53
+"
+"1","Variables: 12
+"
+"1","$ iso2                      [3m[38;5;246m<chr>[39m[23m ""AR"", ""AT"", ""AU"", ""BE"", ""BG"", ""BJ"", ""...
+"
+"1",""
+"1","$ title                     [3m[38;5;246m<fct>[39m[23m Argentina, Austria, Australia, Belgiu...
+"
+"1",""
+"1","$ gbif_region               [3m[38;5;246m<chr>[39m[23m ""Latin America"", ""Europe"", ""Oceania"",...
+"
+"1",""
+"1","$ occ_published_total       [3m[38;5;246m<dbl>[39m[23m 4266370, 3850648, 80391315, 39817252,...
+"
+"1",""
+"1","$ num_occ_published_nobirds [3m[38;5;246m<dbl>[39m[23m 1227229, 3148462, 30655340, 15940025,...
+"
+"1",""
+"1","$ land_area_sq_km           [3m[38;5;246m<dbl>[39m[23m 2736690, 82523, 7692020, 30280, 10856...
+"
+"1",""
+"1","$ gdp_current_us            [3m[38;5;246m<dbl>[39m[23m 5.198715e+11, 4.552858e+11, 1.433904e...
+"
+"1",""
+"1","$ gdp_per_capita_current_us [3m[38;5;246m<dbl>[39m[23m 11683.9496, 51461.9548, 57373.6867, 4...
+"
+"1",""
+"1","$ population_total          [3m[38;5;246m<dbl>[39m[23m 44494502, 8847037, 24992369, 11422068...
+"
+"1",""
+"1","$ variable                  [3m[38;5;246m<dbl>[39m[23m 4266370, 3850648, 80391315, 39817252,...
+"
+"1",""
+"1","$ predicted_occ             [3m[38;5;246m<dbl>[39m[23m 16939698.4, 40439914.2, 104240058.9, ...
+"
+"1",""
+"1","$ observed_minus_predicted  [3m[38;5;246m<dbl>[39m[23m -12673328, -36589266, -23848744, 4083...
+"
+"1","Observations: 53
+"
+"1","Variables: 12
+"
+"1","$ iso2                      [3m[38;5;246m<chr>[39m[23m ""AR"", ""AT"", ""AU"", ""BE"", ""BG"", ""BJ"", ""...
+"
+"1",""
+"1","$ title                     [3m[38;5;246m<fct>[39m[23m Argentina, Austria, Australia, Belgiu...
+"
+"1",""
+"1","$ gbif_region               [3m[38;5;246m<chr>[39m[23m ""Latin America"", ""Europe"", ""Oceania"",...
+"
+"1",""
+"1","$ occ_published_total       [3m[38;5;246m<dbl>[39m[23m 4266370, 3850648, 80391315, 39817252,...
+"
+"1",""
+"1","$ num_occ_published_nobirds [3m[38;5;246m<dbl>[39m[23m 1227229, 3148462, 30655340, 15940025,...
+"
+"1",""
+"1","$ land_area_sq_km           [3m[38;5;246m<dbl>[39m[23m 2736690, 82523, 7692020, 30280, 10856...
+"
+"1",""
+"1","$ gdp_current_us            [3m[38;5;246m<dbl>[39m[23m 5.198715e+11, 4.552858e+11, 1.433904e...
+"
+"1",""
+"1","$ gdp_per_capita_current_us [3m[38;5;246m<dbl>[39m[23m 11683.9496, 51461.9548, 57373.6867, 4...
+"
+"1",""
+"1","$ population_total          [3m[38;5;246m<dbl>[39m[23m 44494502, 8847037, 24992369, 11422068...
+"
+"1",""
+"1","$ variable                  [3m[38;5;246m<dbl>[39m[23m 4266370, 3850648, 80391315, 39817252,...
+"
+"1",""
+"1","$ predicted_occ             [3m[38;5;246m<dbl>[39m[23m 8871334, 50744093, 56967143, 46593115...
+"
+"1",""
+"1","$ observed_minus_predicted  [3m[38;5;246m<dbl>[39m[23m -4604964.2, -46893444.9, 23424171.9, ...
+"
+"1","Observations: 53
+"
+"1","Variables: 12
+"
+"1","$ iso2                      [3m[38;5;246m<chr>[39m[23m ""AR"", ""AT"", ""AU"", ""BE"", ""BG"", ""BJ"", ""...
+"
+"1",""
+"1","$ title                     [3m[38;5;246m<fct>[39m[23m Argentina, Austria, Australia, Belgiu...
+"
+"1",""
+"1","$ gbif_region               [3m[38;5;246m<chr>[39m[23m ""Latin America"", ""Europe"", ""Oceania"",...
+"
+"1",""
+"1","$ occ_published_total       [3m[38;5;246m<dbl>[39m[23m 4266370, 3850648, 80391315, 39817252,...
+"
+"1",""
+"1","$ num_occ_published_nobirds [3m[38;5;246m<dbl>[39m[23m 1227229, 3148462, 30655340, 15940025,...
+"
+"1",""
+"1","$ land_area_sq_km           [3m[38;5;246m<dbl>[39m[23m 2736690, 82523, 7692020, 30280, 10856...
+"
+"1",""
+"1","$ gdp_current_us            [3m[38;5;246m<dbl>[39m[23m 5.198715e+11, 4.552858e+11, 1.433904e...
+"
+"1",""
+"1","$ gdp_per_capita_current_us [3m[38;5;246m<dbl>[39m[23m 11683.9496, 51461.9548, 57373.6867, 4...
+"
+"1",""
+"1","$ population_total          [3m[38;5;246m<dbl>[39m[23m 44494502, 8847037, 24992369, 11422068...
+"
+"1",""
+"1","$ variable                  [3m[38;5;246m<dbl>[39m[23m 1227229, 3148462, 30655340, 15940025,...
+"
+"1",""
+"1","$ predicted_occ             [3m[38;5;246m<dbl>[39m[23m 5455212.3, 17118045.2, 26574218.9, 15...
+"
+"1",""
+"1","$ observed_minus_predicted  [3m[38;5;246m<dbl>[39m[23m -4227983.3, -13969583.2, 4081121.1, 2...
+"
+"1","Observations: 53
+"
+"1","Variables: 12
+"
+"1","$ iso2                      [3m[38;5;246m<chr>[39m[23m ""AR"", ""AT"", ""AU"", ""BE"", ""BG"", ""BJ"", ""...
+"
+"1",""
+"1","$ title                     [3m[38;5;246m<fct>[39m[23m Argentina, Austria, Australia, Belgiu...
+"
+"1",""
+"1","$ gbif_region               [3m[38;5;246m<chr>[39m[23m ""Latin America"", ""Europe"", ""Oceania"",...
+"
+"1",""
+"1","$ occ_published_total       [3m[38;5;246m<dbl>[39m[23m 4266370, 3850648, 80391315, 39817252,...
+"
+"1",""
+"1","$ num_occ_published_nobirds [3m[38;5;246m<dbl>[39m[23m 1227229, 3148462, 30655340, 15940025,...
+"
+"1",""
+"1","$ land_area_sq_km           [3m[38;5;246m<dbl>[39m[23m 2736690, 82523, 7692020, 30280, 10856...
+"
+"1",""
+"1","$ gdp_current_us            [3m[38;5;246m<dbl>[39m[23m 5.198715e+11, 4.552858e+11, 1.433904e...
+"
+"1",""
+"1","$ gdp_per_capita_current_us [3m[38;5;246m<dbl>[39m[23m 11683.9496, 51461.9548, 57373.6867, 4...
+"
+"1",""
+"1","$ population_total          [3m[38;5;246m<dbl>[39m[23m 44494502, 8847037, 24992369, 11422068...
+"
+"1",""
+"1","$ variable                  [3m[38;5;246m<dbl>[39m[23m 1227229, 3148462, 30655340, 15940025,...
+"
+"1",""
+"1","$ predicted_occ             [3m[38;5;246m<dbl>[39m[23m 4532249, 18478943, 20551675, 17096364...
+"
+"1",""
+"1","$ observed_minus_predicted  [3m[38;5;246m<dbl>[39m[23m -3305020.0, -15330481.5, 10103665.1, ...
+"
+"1","[[1]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[2]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[3]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[4]]
+"
+"1","NULL
+"
+"1","
+"

@@ -1,0 +1,955 @@
+"0",""
+"0","library(purrr)"
+"2","Warning message:
+"
+"2","package ‘dplyr’ was built under R version 3.5.3 
+"
+"0","library(dplyr)"
+"0",""
+"0","d = readr::read_tsv(""http://download.gbif.org/custom_download/jwaller/country_breakdown_taxon.tsv"") %>%"
+"0","mutate(iso2=countrycode) %>%"
+"0","merge(gbifapi::get_gbif_countries() %>% select(iso2,title,gbifRegion),id=""iso2"") %>%"
+"0","janitor::clean_names() %>%"
+"0","mutate(gbif_region = stringr::str_replace_all(gbif_region,""_"","" "")) %>%"
+"0","mutate(gbif_region = stringr::str_to_title(gbif_region)) %>%"
+"0","filter(!gbif_region == ""Antarctica"")"
+"0",""
+"0","d$taxonkey %>% unique()"
+"1"," [1]"
+"1","  35"
+"1","   5"
+"1"," 358"
+"1","   1"
+"1","  34"
+"1","   6"
+"1"," 359"
+"1","  95"
+"1"," 216"
+"1"," 367"
+"1"," 212"
+"1","  52"
+"1"," 131"
+"1","
+"
+"0","# parameters "
+"0","parameters_about = tibble::tibble("
+"0","gbif_region = c(""Global"")"
+"0",") %>% "
+"0","mutate(top_groups = list(c(""Birds"",""Plants"",""Insects"",""Fungi"",""Mammals""))) %>%"
+"0","mutate(variable = ""num_of_occ"") %>%"
+"0","mutate(variable_total = ""occ_total"") %>% "
+"0","mutate(plot_title = paste0(gbif_region,"" - Number of Occurrences"")) %>%"
+"0","mutate(plot_subtitle = ""Number of occurrences about country/area"") %>% "
+"0","mutate(total_filter = 1e6) %>%"
+"0","mutate("
+"0","color_values = list(c("
+"0","Birds = ""#ff9326"", "
+"0","Plants = ""#509E2F"", "
+"0","Mammals = ""#175CA1"", "
+"0","Insects = ""#40BFFF"","
+"0","Fungi = ""#FDAF02"", "
+"0","Other = ""#ff0040""))) %>%"
+"0","mutate(no_birds = FALSE) %>% "
+"0","glimpse() "
+"1","Observations: 1
+"
+"1","Variables: 9
+"
+"1","$ gbif_region    [3m[90m<chr>[39m[23m ""Global""
+"
+"1",""
+"1","$ top_groups     [3m[90m<list>[39m[23m [<""Birds"", ""Plants"", ""Insects"", ""Fu...
+"
+"1",""
+"1","$ variable       [3m[90m<chr>[39m[23m ""num_of_occ""
+"
+"1",""
+"1","$ variable_total [3m[90m<chr>[39m[23m ""occ_total""
+"
+"1",""
+"1","$ plot_title     [3m[90m<chr>[39m[23m ""Global - Number of Occurrences""
+"
+"1",""
+"1","$ plot_subtitle  [3m[90m<chr>[39m[23m ""Number of occurrences about country...
+"
+"1",""
+"1","$ total_filter   [3m[90m<dbl>[39m[23m 1e+06
+"
+"1",""
+"1","$ color_values   [3m[90m<list>[39m[23m [<""#ff9326"", ""#509E2F"", ""#175CA1"", ...
+"
+"1",""
+"1","$ no_birds       [3m[90m<lgl>[39m[23m FALSE
+"
+"0","parameters_published = tibble::tibble("
+"0","gbif_region = c(""Global"")"
+"0",") %>% "
+"0","mutate(top_groups = list(c(""Birds"",""Plants"",""Insects"",""Fungi"",""Mammals""))) %>%"
+"0","mutate(variable = ""num_of_occ_published"") %>%"
+"0","mutate(variable_total = ""occ_published_total"") %>% "
+"0","mutate(plot_title = paste0(gbif_region,"" - Number of Published Occurrences"")) %>%"
+"0","mutate(plot_subtitle = ""Number of published occurrences by country/area"") %>% "
+"0","mutate(total_filter = 1e6) %>%"
+"0","mutate("
+"0","color_values = list(c("
+"0","Birds = ""#ff9326"", "
+"0","Plants = ""#509E2F"", "
+"0","Mammals = ""#175CA1"", "
+"0","Insects = ""#40BFFF"","
+"0","Fungi = ""#FDAF02"", "
+"0","Other = ""#ff0040""))) %>%"
+"0","mutate(no_birds = FALSE) %>% "
+"0","glimpse() "
+"1","Observations: 1
+"
+"1","Variables: 9
+"
+"1","$ gbif_region    [3m[90m<chr>[39m[23m ""Global""
+"
+"1",""
+"1","$ top_groups     [3m[90m<list>[39m[23m [<""Birds"", ""Plants"", ""Insects"", ""Fu...
+"
+"1",""
+"1","$ variable       [3m[90m<chr>[39m[23m ""num_of_occ_published""
+"
+"1",""
+"1","$ variable_total [3m[90m<chr>[39m[23m ""occ_published_total""
+"
+"1",""
+"1","$ plot_title     [3m[90m<chr>[39m[23m ""Global - Number of Published Occurr...
+"
+"1",""
+"1","$ plot_subtitle  [3m[90m<chr>[39m[23m ""Number of published occurrences by ...
+"
+"1",""
+"1","$ total_filter   [3m[90m<dbl>[39m[23m 1e+06
+"
+"1",""
+"1","$ color_values   [3m[90m<list>[39m[23m [<""#ff9326"", ""#509E2F"", ""#175CA1"", ...
+"
+"1",""
+"1","$ no_birds       [3m[90m<lgl>[39m[23m FALSE
+"
+"0","# parameters no birds "
+"0","parameters_about_nobirds = tibble::tibble("
+"0","gbif_region = c(""Global"")"
+"0",") %>% "
+"0","mutate(top_groups = list(c(""Birds"",""Plants"",""Insects"",""Fungi"",""Mammals"",""Molluscs""))) %>%"
+"0","mutate(variable = ""num_of_occ"") %>%"
+"0","mutate(variable_total = ""occ_total"") %>% "
+"0","mutate(plot_title = paste0(gbif_region,"" - Number of Occurrences (No Birds)"")) %>%"
+"0","mutate(plot_subtitle = ""Number of occurrences about country/area"") %>% "
+"0","mutate(total_filter = 1e6) %>%"
+"0","mutate("
+"0","color_values = list(c("
+"0","Molluscs = ""#ffcccc"","
+"0","Birds = ""#ff9326"", "
+"0","Plants = ""#509E2F"", "
+"0","Mammals = ""#175CA1"", "
+"0","Insects = ""#40BFFF"","
+"0","Fungi = ""#FDAF02"", "
+"0","Other = ""#ff0040""))) %>%"
+"0","mutate(no_birds = TRUE) "
+"0",""
+"0","parameters_published_nobirds = tibble::tibble("
+"0","gbif_region = c(""Global"")"
+"0",") %>% "
+"0","mutate(top_groups = list(c(""Birds"",""Plants"",""Insects"",""Fungi"",""Mammals"",""Molluscs""))) %>%"
+"0","mutate(variable = ""num_of_occ_published"") %>%"
+"0","mutate(variable_total = ""occ_published_total"") %>% "
+"0","mutate(plot_title = paste0(gbif_region,"" - Number of Published Occurrences"")) %>%"
+"0","mutate(plot_subtitle = ""Number of published occurrences by country/area"") %>% "
+"0","mutate(total_filter = 1e6) %>%"
+"0","mutate("
+"0","color_values = list(c("
+"0","Molluscs = ""#ffcccc"","
+"0","Birds = ""#ff9326"", "
+"0","Plants = ""#509E2F"", "
+"0","Mammals = ""#175CA1"", "
+"0","Insects = ""#40BFFF"","
+"0","Fungi = ""#FDAF02"", "
+"0","Other = ""#ff0040""))) %>%"
+"0","mutate(no_birds = TRUE) "
+"0",""
+"0","parameters = "
+"0","rbind("
+"0","parameters_about,"
+"0","parameters_published,"
+"0","parameters_about_nobirds,"
+"0","parameters_published_nobirds"
+"0",") %>%"
+"0","purrr::transpose()"
+"0",""
+"0","parameters"
+"1","[[1]]
+"
+"1","[[1]]$gbif_region
+"
+"1","[1]"
+"1"," ""Global"""
+"1","
+"
+"1","
+"
+"1","[[1]]$top_groups
+"
+"1","[1]"
+"1"," ""Birds""  "
+"1"," ""Plants"" "
+"1"," ""Insects"""
+"1"," ""Fungi""  "
+"1"," ""Mammals"""
+"1","
+"
+"1","
+"
+"1","[[1]]$variable
+"
+"1","[1]"
+"1"," ""num_of_occ"""
+"1","
+"
+"1","
+"
+"1","[[1]]$variable_total
+"
+"1","[1]"
+"1"," ""occ_total"""
+"1","
+"
+"1","
+"
+"1","[[1]]$plot_title
+"
+"1","[1]"
+"1"," ""Global - Number of Occurrences"""
+"1","
+"
+"1","
+"
+"1","[[1]]$plot_subtitle
+"
+"1","[1]"
+"1"," ""Number of occurrences about country/area"""
+"1","
+"
+"1","
+"
+"1","[[1]]$total_filter
+"
+"1","[1]"
+"1"," 1e+06"
+"1","
+"
+"1","
+"
+"1","[[1]]$color_values
+"
+"1","    Birds "
+"1","   Plants "
+"1","  Mammals "
+"1","  Insects "
+"1","    Fungi "
+"1","    Other "
+"1","
+"
+"1","""#ff9326"" "
+"1","""#509E2F"" "
+"1","""#175CA1"" "
+"1","""#40BFFF"" "
+"1","""#FDAF02"" "
+"1","""#ff0040"" "
+"1","
+"
+"1","
+"
+"1","[[1]]$no_birds
+"
+"1","[1]"
+"1"," FALSE"
+"1","
+"
+"1","
+"
+"1","
+"
+"1","[[2]]
+"
+"1","[[2]]$gbif_region
+"
+"1","[1]"
+"1"," ""Global"""
+"1","
+"
+"1","
+"
+"1","[[2]]$top_groups
+"
+"1","[1]"
+"1"," ""Birds""  "
+"1"," ""Plants"" "
+"1"," ""Insects"""
+"1"," ""Fungi""  "
+"1"," ""Mammals"""
+"1","
+"
+"1","
+"
+"1","[[2]]$variable
+"
+"1","[1]"
+"1"," ""num_of_occ_published"""
+"1","
+"
+"1","
+"
+"1","[[2]]$variable_total
+"
+"1","[1]"
+"1"," ""occ_published_total"""
+"1","
+"
+"1","
+"
+"1","[[2]]$plot_title
+"
+"1","[1]"
+"1"," ""Global - Number of Published Occurrences"""
+"1","
+"
+"1","
+"
+"1","[[2]]$plot_subtitle
+"
+"1","[1]"
+"1"," ""Number of published occurrences by country/area"""
+"1","
+"
+"1","
+"
+"1","[[2]]$total_filter
+"
+"1","[1]"
+"1"," 1e+06"
+"1","
+"
+"1","
+"
+"1","[[2]]$color_values
+"
+"1","    Birds "
+"1","   Plants "
+"1","  Mammals "
+"1","  Insects "
+"1","    Fungi "
+"1","    Other "
+"1","
+"
+"1","""#ff9326"" "
+"1","""#509E2F"" "
+"1","""#175CA1"" "
+"1","""#40BFFF"" "
+"1","""#FDAF02"" "
+"1","""#ff0040"" "
+"1","
+"
+"1","
+"
+"1","[[2]]$no_birds
+"
+"1","[1]"
+"1"," FALSE"
+"1","
+"
+"1","
+"
+"1","
+"
+"1","[[3]]
+"
+"1","[[3]]$gbif_region
+"
+"1","[1]"
+"1"," ""Global"""
+"1","
+"
+"1","
+"
+"1","[[3]]$top_groups
+"
+"1","[1]"
+"1"," ""Birds""   "
+"1"," ""Plants""  "
+"1"," ""Insects"" "
+"1"," ""Fungi""   "
+"1"," ""Mammals"" "
+"1","
+"
+"1","[6]"
+"1"," ""Molluscs"""
+"1","
+"
+"1","
+"
+"1","[[3]]$variable
+"
+"1","[1]"
+"1"," ""num_of_occ"""
+"1","
+"
+"1","
+"
+"1","[[3]]$variable_total
+"
+"1","[1]"
+"1"," ""occ_total"""
+"1","
+"
+"1","
+"
+"1","[[3]]$plot_title
+"
+"1","[1]"
+"1"," ""Global - Number of Occurrences (No Birds)"""
+"1","
+"
+"1","
+"
+"1","[[3]]$plot_subtitle
+"
+"1","[1]"
+"1"," ""Number of occurrences about country/area"""
+"1","
+"
+"1","
+"
+"1","[[3]]$total_filter
+"
+"1","[1]"
+"1"," 1e+06"
+"1","
+"
+"1","
+"
+"1","[[3]]$color_values
+"
+"1"," Molluscs "
+"1","    Birds "
+"1","   Plants "
+"1","  Mammals "
+"1","  Insects "
+"1","    Fungi "
+"1","
+"
+"1","""#ffcccc"" "
+"1","""#ff9326"" "
+"1","""#509E2F"" "
+"1","""#175CA1"" "
+"1","""#40BFFF"" "
+"1","""#FDAF02"" "
+"1","
+"
+"1","    Other "
+"1","
+"
+"1","""#ff0040"" "
+"1","
+"
+"1","
+"
+"1","[[3]]$no_birds
+"
+"1","[1]"
+"1"," TRUE"
+"1","
+"
+"1","
+"
+"1","
+"
+"1","[[4]]
+"
+"1","[[4]]$gbif_region
+"
+"1","[1]"
+"1"," ""Global"""
+"1","
+"
+"1","
+"
+"1","[[4]]$top_groups
+"
+"1","[1]"
+"1"," ""Birds""   "
+"1"," ""Plants""  "
+"1"," ""Insects"" "
+"1"," ""Fungi""   "
+"1"," ""Mammals"" "
+"1","
+"
+"1","[6]"
+"1"," ""Molluscs"""
+"1","
+"
+"1","
+"
+"1","[[4]]$variable
+"
+"1","[1]"
+"1"," ""num_of_occ_published"""
+"1","
+"
+"1","
+"
+"1","[[4]]$variable_total
+"
+"1","[1]"
+"1"," ""occ_published_total"""
+"1","
+"
+"1","
+"
+"1","[[4]]$plot_title
+"
+"1","[1]"
+"1"," ""Global - Number of Published Occurrences"""
+"1","
+"
+"1","
+"
+"1","[[4]]$plot_subtitle
+"
+"1","[1]"
+"1"," ""Number of published occurrences by country/area"""
+"1","
+"
+"1","
+"
+"1","[[4]]$total_filter
+"
+"1","[1]"
+"1"," 1e+06"
+"1","
+"
+"1","
+"
+"1","[[4]]$color_values
+"
+"1"," Molluscs "
+"1","    Birds "
+"1","   Plants "
+"1","  Mammals "
+"1","  Insects "
+"1","    Fungi "
+"1","
+"
+"1","""#ffcccc"" "
+"1","""#ff9326"" "
+"1","""#509E2F"" "
+"1","""#175CA1"" "
+"1","""#40BFFF"" "
+"1","""#FDAF02"" "
+"1","
+"
+"1","    Other "
+"1","
+"
+"1","""#ff0040"" "
+"1","
+"
+"1","
+"
+"1","[[4]]$no_birds
+"
+"1","[1]"
+"1"," TRUE"
+"1","
+"
+"1","
+"
+"1","
+"
+"0","# path_to_plots = ""C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/"""
+"0",""
+"0","library(ggplot2)"
+"0",""
+"0","parameters %>%"
+"0","map(~"
+"0","gbifregionalstats::stacked_bar_facet("
+"0","d,"
+"0","variable = .x$variable,"
+"0","variable_total = .x$variable_total,"
+"0","gbif_region = .x$gbif_region,"
+"0","top_groups = .x$top_groups,"
+"0","plot_title = .x$plot_title,"
+"0","plot_subtitle = .x$plot_subtitle,"
+"0","country_text_size = 10,"
+"0","color_values = .x$color_values,"
+"0","total_filter = .x$total_filter,"
+"0","no_birds = .x$no_birds"
+"0",")) %>% "
+"0","map2(parameters,~{"
+"0","ggsave(paste0(path_to_plots,""country stacked barplots facet/pdf/facet_stacked_"",.y$variable,""_"",.y$gbif_region,""_nobirds_"",.y$no_birds,"".pdf""),plot=.x,width=6,height=10)"
+"0","ggsave(paste0(path_to_plots,""country stacked barplots facet/svg/facet_stacked_"",.y$variable,""_"",.y$gbif_region,""_nobirds_"",.y$no_birds,"".svg""),plot=.x,width=6,height=10)"
+"0","ggsave(paste0(path_to_plots,""country stacked barplots facet/jpg/facet_stacked_"",.y$variable,""_"",.y$gbif_region,""_nobirds_"",.y$no_birds,"".jpg""),plot=.x,width=6,height=10,dpi=600)"
+"0","})"
+"1","Observations: 1,212
+"
+"1","Variables: 5
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Comoros"", ""Sri Lanka"", ""Equatorial Gui...
+"
+"1",""
+"1","$ gbif_region [3m[90m<chr>[39m[23m ""Africa"", ""Asia"", ""Africa"", ""Latin Amer...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fungi, Fung...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 50, 6553, 103, 1988, 43360, 1983, 4714,...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 33309, 456860, 88919, 306073, 4971530, ...
+"
+"1","Observations: 243
+"
+"1","Variables: 5
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Afghanistan"", ""Åland Islands"", ""Albani...
+"
+"1",""
+"1","$ gbif_region [3m[90m<chr>[39m[23m ""Asia"", ""Europe"", ""Europe"", ""Africa"", ""...
+"
+"1",""
+"1","$ common_name [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 7442, 62, 4891, 50553, 284174, 2254, 46...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 531738, 279943, 31012, 199463, 298909, ...
+"
+"1","Observations: 348
+"
+"1","Variables: 7
+"
+"1","$ title       [3m[90m<fct>[39m[23m Argentina, Guatemala, Papua New Guinea,...
+"
+"1",""
+"1","$ gbif_region [3m[90m<fct>[39m[23m Latin America, Latin America, Oceania, ...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fungi, Fung...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 43360, 4714, 26672, 264205, 113916, 315...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 4971530, 1796793, 1367612, 82872897, 28...
+"
+"1",""
+"1","$ total       [3m[90m<dbl>[39m[23m 4971530, 1796793, 1367612, 82872897, 28...
+"
+"1",""
+"1","$ max_region  [3m[90m<dbl>[39m[23m 17642518, 17642518, 90628167, 89992675,...
+"
+"1","Observations: 1,212
+"
+"1","Variables: 5
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Comoros"", ""Sri Lanka"", ""Equat...
+"
+"1",""
+"1","$ gbif_region          [3m[90m<chr>[39m[23m ""Africa"", ""Asia"", ""Africa"", ""L...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fu...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m NA, NA, NA, NA, 16154, NA, NA,...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m NA, NA, NA, NA, 4266370, NA, N...
+"
+"1","Observations: 438
+"
+"1","Variables: 5
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Afghanistan"", ""Afghanistan"", ...
+"
+"1",""
+"1","$ gbif_region          [3m[90m<chr>[39m[23m ""Asia"", ""Asia"", ""Europe"", ""Eur...
+"
+"1",""
+"1","$ common_name          [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 0, NA, NA, 0, NA, 0, NA, 0, NA...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 9374, NA, NA, 5031, NA, 18586,...
+"
+"1","Observations: 222
+"
+"1","Variables: 7
+"
+"1","$ title                [3m[90m<fct>[39m[23m Argentina, France, Finland, Sw...
+"
+"1",""
+"1","$ gbif_region          [3m[90m<fct>[39m[23m Latin America, Europe, Europe,...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fu...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 16154, 220630, 62274, 9142, 24...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 4266370, 89953822, 29030033, 3...
+"
+"1",""
+"1","$ total                [3m[90m<dbl>[39m[23m 4266370, 89953822, 29030033, 3...
+"
+"1",""
+"1","$ max_region           [3m[90m<dbl>[39m[23m 12938722, 105717661, 105717661...
+"
+"1","Observations: 2,882
+"
+"1","Variables: 15
+"
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""AD"", ""AD"", ""AD"", ""AD"", ""AD...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""AD"", ""AD"", ""AD"", ""AD"", ""AD...
+"
+"1",""
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 35, 5, 358, 1, 34, 6, 359, ...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 278, 985, 16, 1769, 542, 24...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 2300, 3517, 331, 52634, 199...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""AD"", ""AD"", ""AD"", ""AD"", ""AD...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 215, 852, 16, 1399, 521, 18...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 1800, 3028, 312, 49110, 177...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 113290, 113290, 113290, 113...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 4105, 4105, 4105, 4105, 410...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 107008, 107008, 107008, 107...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 5233, 5233, 5233, 5233, 523...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Andorra"", ""Andorra"", ""Ando...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""Europe"", ""Europe"", ""Europe...
+"
+"1",""
+"1","$ bird_total              [3m[90m<dbl>[39m[23m 25761, 25761, 25761, 25761,...
+"
+"1","Observations: 1,212
+"
+"1","Variables: 5
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Saint Kitts and Nevis"", ""Saint Pierre ...
+"
+"1",""
+"1","$ gbif_region [3m[90m<chr>[39m[23m ""Latin America"", ""North America"", ""Euro...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fungi, Fung...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 90, 101, 10695, 831, 3233432, 1, 3469, ...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 12009, 11752, 172621, 112985, 29876486,...
+"
+"1","Observations: 243
+"
+"1","Variables: 5
+"
+"1","$ title       [3m[90m<chr>[39m[23m ""Afghanistan"", ""Åland Islands"", ""Albani...
+"
+"1",""
+"1","$ gbif_region [3m[90m<chr>[39m[23m ""Asia"", ""Europe"", ""Europe"", ""Africa"", ""...
+"
+"1",""
+"1","$ common_name [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 5944, 60, 2824, 37361, 277712, 1218, 41...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 517804, 260159, 22598, 148511, 292790, ...
+"
+"1","Observations: 240
+"
+"1","Variables: 7
+"
+"1","$ title       [3m[90m<fct>[39m[23m Sweden, Taiwan, Spain, Estonia, China, ...
+"
+"1",""
+"1","$ gbif_region [3m[90m<fct>[39m[23m Europe, Asia, Europe, Europe, Asia, Eur...
+"
+"1",""
+"1","$ common_name [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fungi, Fung...
+"
+"1",""
+"1","$ num_of_occ  [3m[90m<dbl>[39m[23m 3233432, 12280, 448437, 183863, 32871, ...
+"
+"1",""
+"1","$ occ_total   [3m[90m<dbl>[39m[23m 29876486, 1761453, 20421786, 1395060, 3...
+"
+"1",""
+"1","$ total       [3m[90m<dbl>[39m[23m 29876486, 1761453, 20421786, 1395060, 3...
+"
+"1",""
+"1","$ max_region  [3m[90m<dbl>[39m[23m 68564803, 6830245, 68564803, 68564803, ...
+"
+"1","Observations: 2,882
+"
+"1","Variables: 15
+"
+"1","$ iso2                    [3m[90m<chr>[39m[23m ""AD"", ""AD"", ""AD"", ""AD"", ""AD...
+"
+"1",""
+"1","$ countrycode             [3m[90m<chr>[39m[23m ""AD"", ""AD"", ""AD"", ""AD"", ""AD...
+"
+"1",""
+"1","$ taxonkey                [3m[90m<dbl>[39m[23m 35, 5, 358, 1, 34, 6, 359, ...
+"
+"1",""
+"1","$ num_species             [3m[90m<dbl>[39m[23m 278, 985, 16, 1769, 542, 24...
+"
+"1",""
+"1","$ num_of_occ              [3m[90m<dbl>[39m[23m 2300, 3517, 331, 52634, 199...
+"
+"1",""
+"1","$ publishingcountry       [3m[90m<chr>[39m[23m ""AD"", ""AD"", ""AD"", ""AD"", ""AD...
+"
+"1",""
+"1","$ num_species_published   [3m[90m<dbl>[39m[23m 215, 852, 16, 1399, 521, 18...
+"
+"1",""
+"1","$ num_of_occ_published    [3m[90m<dbl>[39m[23m 1800, 3028, 312, 49110, 177...
+"
+"1",""
+"1","$ occ_published_total     [3m[90m<dbl>[39m[23m 88453, 88453, 88453, 88453,...
+"
+"1",""
+"1","$ species_published_total [3m[90m<dbl>[39m[23m 4105, 4105, 4105, 4105, 410...
+"
+"1",""
+"1","$ occ_total               [3m[90m<dbl>[39m[23m 132769, 132769, 132769, 132...
+"
+"1",""
+"1","$ species_total           [3m[90m<dbl>[39m[23m 5233, 5233, 5233, 5233, 523...
+"
+"1",""
+"1","$ title                   [3m[90m<chr>[39m[23m ""Andorra"", ""Andorra"", ""Ando...
+"
+"1",""
+"1","$ gbif_region             [3m[90m<chr>[39m[23m ""Europe"", ""Europe"", ""Europe...
+"
+"1",""
+"1","$ bird_total              [3m[90m<dbl>[39m[23m 24837, 24837, 24837, 24837,...
+"
+"1","Observations: 1,212
+"
+"1","Variables: 5
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Saint Kitts and Nevis"", ""Sain...
+"
+"1",""
+"1","$ gbif_region          [3m[90m<chr>[39m[23m ""Latin America"", ""North Americ...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fu...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m NA, NA, NA, NA, 3435021, NA, 6...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m NA, NA, NA, NA, 31989931, NA, ...
+"
+"1","Observations: 313
+"
+"1","Variables: 5
+"
+"1","$ title                [3m[90m<chr>[39m[23m ""Afghanistan"", ""Åland Islands""...
+"
+"1",""
+"1","$ gbif_region          [3m[90m<chr>[39m[23m ""Asia"", ""Europe"", ""Europe"", ""A...
+"
+"1",""
+"1","$ common_name          [3m[90m<chr>[39m[23m ""Other"", ""Other"", ""Other"", ""Ot...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m NA, NA, NA, NA, NA, 931, 58, N...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m NA, NA, NA, NA, NA, 88453, 482...
+"
+"1","Observations: 180
+"
+"1","Variables: 7
+"
+"1","$ title                [3m[90m<fct>[39m[23m Sweden, Taiwan, Spain, Estonia...
+"
+"1",""
+"1","$ gbif_region          [3m[90m<fct>[39m[23m Europe, Asia, Europe, Europe, ...
+"
+"1",""
+"1","$ common_name          [3m[90m<fct>[39m[23m Fungi, Fungi, Fungi, Fungi, Fu...
+"
+"1",""
+"1","$ num_of_occ_published [3m[90m<dbl>[39m[23m 3435021, 9088, 450592, 298058,...
+"
+"1",""
+"1","$ occ_published_total  [3m[90m<dbl>[39m[23m 31989931, 1541008, 20542515, 1...
+"
+"1",""
+"1","$ total                [3m[90m<dbl>[39m[23m 31989931, 1541008, 20542515, 1...
+"
+"1",""
+"1","$ max_region           [3m[90m<dbl>[39m[23m 90540983, 7043170, 90540983, 9...
+"
+"1","[[1]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[2]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[3]]
+"
+"1","NULL
+"
+"1","
+"
+"1","[[4]]
+"
+"1","NULL
+"
+"1","
+"
