@@ -29,8 +29,8 @@ The csv small csv files will be put in the public downloads folder, so they are 
 
 ![](https://raw.githubusercontent.com/jhnwllr/gbif_regional_statistics/master/plots/comparison%20barchart/svg/gbif_regions_occ_count.svg)
 ![](https://raw.githubusercontent.com/jhnwllr/gbif_regional_statistics/master/plots/country%20dotplots/svg/country_dotplot_species_count_Asia.svg)
-
- 
+![](https://raw.githubusercontent.com/jhnwllr/gbif_regional_statistics/master/plots/country%20stacked%20barplots%20facet/svg/facet_stacked_num_of_occ_Global_nobirds_TRUE.svg)
+![](https://raw.githubusercontent.com/jhnwllr/gbif_regional_statistics/master/plots/time%20series/svg/timeseries_num_species.svg)
 
 
 
