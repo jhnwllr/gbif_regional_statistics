@@ -4,11 +4,11 @@
     "created" : 1585660760398.000,
     "dirty" : false,
     "encoding" : "UTF-8",
-    "folds" : "17|74|66|0|\n73|36|132|0|\n200|36|247|0|\n249|85|311|0|\n319|36|391|0|\n393|74|449|0|\n463|36|536|0|\n538|87|739|0|\n756|36|848|0|\n851|87|926|0|\n932|87|1066|0|\n",
+    "folds" : "17|74|66|0|\n73|36|132|0|\n134|74|192|0|\n200|36|247|0|\n249|85|311|0|\n319|36|391|0|\n393|74|449|0|\n463|36|536|0|\n538|87|739|0|\n756|36|848|0|\n851|87|926|0|\n932|87|1066|0|\n1079|87|1180|0|\n1081|11|1122|0|\n1193|87|1248|0|\n1255|87|1329|0|\n",
     "hash" : "1597423707",
     "id" : "B569BBAD",
     "lastKnownWriteTime" : 1587630058,
-    "last_content_update" : 1587631246885,
+    "last_content_update" : 1587634056221,
     "path" : "C:/Users/ftw712/Desktop/gbif_regional_statistics/gbifregionalstats/plot_gallery_notebook.rmd",
     "project_path" : "plot_gallery_notebook.rmd",
     "properties" : {
