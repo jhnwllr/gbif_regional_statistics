@@ -268,6 +268,44 @@ ggsave(paste0("C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/hexagon pl
 
 }
 
+if(FALSE) { # hexagon plot_poly_map_gaps
+
+library(ggplot2)
+library(dplyr)
+library(purrr)
+library(roperators)
+library(gbifregionalstats)
+
+# c(0,200,300,5000),"num_datasets","dataset count",
+# c(0,100,300,500),"num_publishers","publisher count"
+vars = tibble::tribble(
+~breaks,~variable_,~legend_title_,
+c(0,5000,10000,55000),"num_species","species count"
+) %>% purrr::transpose()
+
+vars
+
+D = data.table::fread("C:/Users/ftw712/Desktop/gbif_regional_statistics/data/polygon_counts_isea3h_res6.tsv") %>% 
+glimpse()
+
+vars %>%
+map(~ 
+stats_plotter_global(D,
+isea3h = gbifregionalstats::isea3h_res6,
+variable_ = .x$variable_,
+legend_title_=.x$legend_title_,
+breaks_ = .x$breaks,
+filter_column_string = NULL,
+filter_column_value = NULL
+)) %>%
+map2(vars,~ 
+{
+ggsave(paste0("C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/hexagon plots/global_",.y$variable_,".pdf"),plot=.x,scale=1,width=9,height=5)
+# ggsave(paste0("C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/hexagon plots/global_",.y$variable_,".svg"),plot=.x,scale=1,width=9,height=5)
+ggsave(paste0("C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/hexagon plots/global_",.y$variable_,".jpg"),plot=.x,scale=1,width=9,height=5,dpi=900)
+})
+}
+
 if(FALSE) { # get regions list to put into hdfs 
 
 library(dplyr)
@@ -1976,145 +2014,216 @@ ggsave(paste0(path_to_plots,"data use/jpg/data_use.jpg"),plot=p,width=16*0.5,hei
 
 }
 
-library(purrr)
+# change in number of species since 2015 dotplots
 library(dplyr)
+library(purrr)
 
-d = readr::read_tsv("http://download.gbif.org/custom_download/jwaller/country_breakdown_taxon.tsv") %>%
-mutate(iso2=countrycode) %>%
-merge(gbifapi::get_gbif_countries() %>% select(iso2,title,gbifRegion),id="iso2") %>%
+d = readr::read_tsv("http://download.gbif.org/custom_download/jwaller/country_counts_time_series.tsv") %>%
+mutate(iso2 = country) %>%
+merge(gbifapi::get_gbif_countries(),id="iso2") %>%
 janitor::clean_names() %>%
+mutate(snapshot=stringr::str_replace_all(snapshot,"occurrence_","")) %>%
+mutate(date=lubridate::ymd(snapshot)) %>%
 mutate(gbif_region = stringr::str_replace_all(gbif_region,"_"," ")) %>%
 mutate(gbif_region = stringr::str_to_title(gbif_region)) %>%
-filter(!gbif_region == "Antarctica") %>%
-mutate(column_group =
-case_when(
-gbif_region == "Europe" ~ "group_1",
-gbif_region == "Asia" ~ "group_1",
-gbif_region == "Latin America" ~ "group_1",
-gbif_region == "Africa" ~ "group_1",
-gbif_region == "Oceania" ~ "group_2",
-gbif_region == "North America" ~ "group_2",
-TRUE ~ NA_character_
-))
+mutate(gbif_region = gbifapi::replace_gbif_region(gbif_region,shorten=FALSE)) %>%
+filter(!gbif_region == "Antarctica") %>% 
+glimpse()
 
-# parameters 
-parameters_about = tibble::tibble(
-gbif_region = c("Global")
+
+
+
+
+################################################# Global Parameters 
+
+parameters_num_of_occ_global = tibble(
+variable = "occ_count",
+gbif_region = "Global"
 ) %>% 
-mutate(top_groups = list(c("Birds","Plants","Insects","Fungi","Mammals"))) %>%
-mutate(variable = "num_of_occ") %>%
-mutate(variable_total = "occ_total") %>% 
-mutate(plot_title = paste0(gbif_region," - Number of Occurrences")) %>%
-mutate(plot_subtitle = "Number of occurrences about country/area") %>% 
-mutate(total_filter = 1e6) %>%
-mutate(
-color_values = list(c(
-Birds = "#ff9326", 
-Plants = "#509E2F", 
-Mammals = "#175CA1", 
-Insects = "#40BFFF",
-Fungi = "#FDAF02", 
-Other = "#ff0040"))) %>%
-mutate(no_birds = FALSE) %>% 
-glimpse() 
+mutate(plot_title = paste0(gbif_region, "")) %>% 
+mutate(plot_subtitle = "Number of occurrences about country on GBIF") %>% 
+mutate(y_lab = "number of occurrences") %>%
+mutate(filter_count = 5e6) %>%
+mutate(country_text_size = 11) %>%
+mutate(unit_scale = 1e-6) %>%
+mutate(unit_MK = "M") %>%
+mutate(gain_color =  "#509E2F") %>% 
+mutate(comparison_snapshot = "2015-01-19") %>%
+mutate(comparison_snapshot_label = "2015") 
 
-parameters_published = tibble::tibble(
-gbif_region = c("Global")
+parameters_num_species_global = tibble(
+variable = "species_count",
+gbif_region = "Global"
 ) %>% 
-mutate(top_groups = list(c("Birds","Plants","Insects","Fungi","Mammals"))) %>%
-mutate(variable = "num_of_occ_published") %>%
-mutate(variable_total = "occ_published_total") %>% 
-mutate(plot_title = paste0(gbif_region," - Number of Published Occurrences")) %>%
-mutate(plot_subtitle = "Number of published occurrences by country/area") %>% 
-mutate(total_filter = 1e6) %>%
-mutate(
-color_values = list(c(
-Birds = "#ff9326", 
-Plants = "#509E2F", 
-Mammals = "#175CA1", 
-Insects = "#40BFFF",
-Fungi = "#FDAF02", 
-Other = "#ff0040"))) %>%
-mutate(no_birds = FALSE) %>% 
-glimpse() 
+mutate(plot_title = paste0(gbif_region, "")) %>% 
+mutate(plot_subtitle = "Number of species about country on GBIF") %>% 
+mutate(y_lab = "number of species") %>%
+mutate(filter_count = 2e4) %>%
+mutate(country_text_size = 11) %>%
+mutate(unit_scale = 1e-3) %>%
+mutate(unit_MK = "K") %>%
+mutate(gain_color =  "#FDAF02") %>% 
+mutate(comparison_snapshot = "2015-01-19") %>%
+mutate(comparison_snapshot_label = "2015") 
 
-
-# parameters no birds 
-parameters_about_nobirds = tibble::tibble(
-gbif_region = c("Global")
+parameters_occ_published_global = tibble(
+variable = "occ_count_published",
+gbif_region = "Global"
 ) %>% 
-mutate(top_groups = list(c("Birds","Plants","Insects","Fungi","Mammals","Molluscs"))) %>%
-mutate(variable = "num_of_occ") %>%
-mutate(variable_total = "occ_total") %>% 
-mutate(plot_title = paste0(gbif_region," - Number of Occurrences (No Birds)")) %>%
-mutate(plot_subtitle = "Number of occurrences about country/area") %>% 
-mutate(total_filter = 1e6) %>%
-mutate(
-color_values = list(c(
-Molluscs = "#ffcccc",
-Birds = "#ff9326", 
-Plants = "#509E2F", 
-Mammals = "#175CA1", 
-Insects = "#40BFFF",
-Fungi = "#FDAF02", 
-Other = "#ff0040"))) %>%
-mutate(no_birds = TRUE) 
+mutate(plot_title = paste0(gbif_region, "")) %>% 
+mutate(plot_subtitle = "Number of occurrences published by country on GBIF") %>% 
+mutate(y_lab = "number of occurrences") %>%
+mutate(filter_count = 5e5) %>%
+mutate(country_text_size = 11) %>%
+mutate(unit_scale = 1e-6) %>%
+mutate(unit_MK = "M") %>%
+mutate(gain_color =  "#40BFFF") %>% 
+mutate(comparison_snapshot = "2015-01-19") %>%
+mutate(comparison_snapshot_label = "2015")
 
-parameters_published_nobirds = tibble::tibble(
-gbif_region = c("Global")
+parameters_species_published_global = tibble(
+variable = "species_count_published",
+gbif_region = "Global"
 ) %>% 
-mutate(top_groups = list(c("Birds","Plants","Insects","Fungi","Mammals","Molluscs"))) %>%
-mutate(variable = "num_of_occ_published") %>%
-mutate(variable_total = "occ_published_total") %>% 
-mutate(plot_title = paste0(gbif_region," - Number of Published Occurrences")) %>%
-mutate(plot_subtitle = "Number of published occurrences by country/area") %>% 
-mutate(total_filter = 1e6) %>%
-mutate(
-color_values = list(c(
-Molluscs = "#ffcccc",
-Birds = "#ff9326", 
-Plants = "#509E2F", 
-Mammals = "#175CA1", 
-Insects = "#40BFFF",
-Fungi = "#FDAF02", 
-Other = "#ff0040"))) %>%
-mutate(no_birds = TRUE) 
+mutate(plot_title = paste0(gbif_region, "")) %>% 
+mutate(plot_subtitle = "Number of species published by country on GBIF") %>% 
+mutate(y_lab = "number of species") %>%
+mutate(filter_count = 1e4) %>%
+mutate(country_text_size = 11) %>%
+mutate(unit_scale = 1e-3) %>%
+mutate(unit_MK = "K") %>%
+mutate(gain_color =  "#D66F27") %>% 
+mutate(comparison_snapshot = "2015-01-19") %>%
+mutate(comparison_snapshot_label = "2015")
+
+
+
+plot_country_dotplot_change = function(
+  d,
+  variable = "num_species",
+  plot_title = "Europe - Number of Species",
+  y_lab = "number of species",
+  country_text_size = 10,
+  gbif_region = "Europe",
+  filter_count = 1e4,
+  plot_subtitle = "Unique species with occurrences in country",
+  unit_MK = "M",
+  unit_scale = 1e-3,
+  gain_color =  "#FDAF02",
+  comparison_snapshot = "2015-01-19",
+  comparison_snapshot_label = "2015",
+  plot_lower = FALSE
+) {
+  if(gbif_region == "Global") {
+
+    d = gbifapi::get_gbif_countries() %>%
+      select(iso2,title) %>%
+      merge(d,id=iso2) %>%
+      mutate(title = gbifapi::clean_country_titles(title)) %>%
+      mutate(date = as.character(date)) %>%
+      filter(date == !! comparison_snapshot | date == "2020-01-01") %>%
+      select(title,
+             date,
+             species_count,
+             occ_count
+      )
+  } else {
+
+    d = gbifapi::get_gbif_countries() %>%
+      select(iso2,title) %>%
+      merge(d,id=iso2) %>%
+      mutate(title = gbifapi::clean_country_titles(title)) %>%
+      mutate(date = as.character(date)) %>%
+      filter(gbif_region == !! gbif_region) %>%
+      filter(date == !! comparison_snapshot | date == "2020-01-01") %>%
+      select(title,
+             date,
+             species_count,
+             occ_count
+      )
+  }
+
+  countries_to_keep = d %>%
+    filter(!! rlang::sym(variable) > !! filter_count) %>%
+    pull(title)
+
+  ## change part 	
+  d = d %>% 
+  filter(title %in% !! countries_to_keep) %>%
+  tidyr::pivot_wider(names_from = date, values_from = !! rlang::sym(variable)) %>%
+  tidyr::replace_na(list(`2020-01-01` = 0, `2015-01-19` = 0))  %>%
+  mutate(change = `2020-01-01` - `2015-01-19`) %>%
+  group_by(title) %>%
+  summarise(change = max(change)) %>%
+  na.omit() %>%
+  mutate(log10_change = log10(change)) %>%
+  mutate(title = forcats::fct_reorder(title,log10_change)) %>%
+  glimpse()
+
+  # breaks = scales::pretty_breaks(n = 7)(c(0,d$log10_change))
+  # print(breaks)
+  # 0 1 2 3 4 5 6
+  breaks = c(0, 1, 2, 3, 4, 5, 6)
+  labels = c("0","10","100","1K","10K","100K","1M")
+  # labels = gbifapi::plot_label_maker(breaks,unit_MK,unit_scale)
+
+  library(ggplot2)
+  p = ggplot(d,aes(title,log10_change)) +
+    geom_point(size=2) +
+    coord_flip() +
+    xlab("") +
+    ylab(y_lab) +
+    theme_bw() +
+    scale_y_continuous(breaks = breaks,labels=labels,limits=c(3.5,6)) +
+    theme(axis.text.x=element_text(face="plain",size=12,color="#535362")) +
+    theme(axis.text.y=element_text(face="plain",size=6,color="#535362")) +
+    labs(title = plot_title,subtitle = plot_subtitle)
+    # theme(legend.position = c(0.9, 0.1)) +
+    # theme(legend.title=element_blank()) +
+    # scale_color_manual(labels = c(comparison_snapshot_label, "2020"), values = c("#535362",gain_color)) +
+    # theme(axis.title.x = element_text(margin = margin(t = 15, r = 0, b = 0, l = 0), size = 12, face="plain",color="#535362")) +
+    # theme(plot.title = element_text(color="#535362", size=11, face="bold")) +
+
+  return(p)
+}
+    # parameters_num_of_occ_global,
 
 parameters = 
-rbind(
-parameters_about,
-parameters_published,
-parameters_about_nobirds,
-parameters_published_nobirds
-) %>%
+parameters_num_species_global %>%
 purrr::transpose()
-
-parameters
 
 path_to_plots = "C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/"
 
-  
-  
 library(ggplot2)
 
 parameters %>%
-map(~
-gbifregionalstats::stacked_bar_facet_wide(
+map( ~
+plot_country_dotplot_change(
 d,
 variable = .x$variable,
-variable_total = .x$variable_total,
-gbif_region = .x$gbif_region,
-top_groups = .x$top_groups,
 plot_title = .x$plot_title,
+y_lab = .x$y_lab,
+country_text_size = .x$country_text_size,
+gbif_region = .x$gbif_region,
+filter_count = .x$filter_count,
 plot_subtitle = .x$plot_subtitle,
-country_text_size = 10,
-color_values = .x$color_values,
-total_filter = .x$total_filter,
-no_birds = .x$no_birds
-)) %>% 
+unit_MK = .x$unit_MK,
+unit_scale = .x$unit_scale,
+gain_color =  .x$gain_color,
+comparison_snapshot = .x$comparison_snapshot,
+comparison_snapshot_label = .x$comparison_snapshot_label,
+plot_lower = FALSE
+)) %>%
 map2(parameters,~{
-ggsave(paste0(path_to_plots,"country stacked barplots facet/pdf/facet_stacked_wide",.y$variable,"_",.y$gbif_region,"_nobirds_",.y$no_birds,".pdf"),plot=.x,width=6,height=10)
-ggsave(paste0(path_to_plots,"country stacked barplots facet/svg/facet_stacked_wide",.y$variable,"_",.y$gbif_region,"_nobirds_",.y$no_birds,".svg"),plot=.x,width=6,height=10)
-ggsave(paste0(path_to_plots,"country stacked barplots facet/jpg/facet_stacked_wide",.y$variable,"_",.y$gbif_region,"_nobirds_",.y$no_birds,".jpg"),plot=.x,width=6,height=10,dpi=600)
+ggsave(paste0(path_to_plots,"country dotplots/pdf/change_dotplot_",.y$variable,"_",.y$gbif_region,".pdf"),plot=.x,width=6,height=5)
+ggsave(paste0(path_to_plots,"country dotplots/svg/change_dotplot_",.y$variable,"_",.y$gbif_region,".svg"),plot=.x,width=6,height=5)
+ggsave(paste0(path_to_plots,"country dotplots/jpg/change_dotplot_",.y$variable,"_",.y$gbif_region,".jpg"),plot=.x,width=6,height=5,dpi=600)
 })
+
+
+
+
+
+
+
 

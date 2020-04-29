@@ -32,7 +32,7 @@ plot_country_dotplot = function(
       )
   } else {
 
-  d = gbifapi::get_gbif_countries() %>%
+    d = gbifapi::get_gbif_countries() %>%
       select(iso2,title) %>%
       merge(d,id=iso2) %>%
       mutate(title = gbifapi::clean_country_titles(title)) %>%
@@ -40,13 +40,13 @@ plot_country_dotplot = function(
       filter(gbif_region == !! gbif_region) %>%
       filter(date == !! comparison_snapshot | date == "2020-01-01") %>%
       select(title,
-              date,
-              species_count,
-              occ_count,
-              species_count_published,
-              occ_count_published
+             date,
+             species_count,
+             occ_count,
+             species_count_published,
+             occ_count_published
 
-                       )
+      )
   }
 
   countries_to_keep = d %>%

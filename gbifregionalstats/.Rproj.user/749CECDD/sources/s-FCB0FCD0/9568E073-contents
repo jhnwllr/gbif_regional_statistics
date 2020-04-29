@@ -1,5 +1,0 @@
-exportPattern("^[[:alpha:]]+")
-import(roperators)
-import(dplyr)
-import(sf)
-import(purrr)

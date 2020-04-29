@@ -84,7 +84,7 @@ stats_plotter_global = function(D,
   # library(gbifrasters)
   library(ggplot2)
 
-  p = plotPolyMap(grid = D,
+  p = plot_poly_map_gaps(grid = D,
                   variable = variable_,
                   breaks=breaks_,
                   labels=NULL,
