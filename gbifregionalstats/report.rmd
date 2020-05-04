@@ -1,0 +1,396 @@
+---
+title: "GBIF plot gallery"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+# global variables 
+path_to_plots = "C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/"
+github_path = "https://raw.githubusercontent.com/jhnwllr/gbif_regional_statistics/master/plots/"
+```
+
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "gbif_region_map"
+plot_folder = "gbif region map"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/gbif region map/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/gbif region map/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/gbif region map/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+# species count map
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "global_num_species"
+plot_folder = "hexagon plots"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+This plot excludes international waters, but includes countries EEZ areas. 
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "gbif_regions_occ_count"
+plot_folder = "comparison barchart"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "gbif_regions_num_species"
+plot_folder = "comparison barchart"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "data_use"
+plot_folder = "data use"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "facet_stacked_num_of_occ_Global_nobirds_FALSE"
+plot_folder = "country stacked barplots facet"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "facet_stacked_num_of_occ_Global_nobirds_TRUE"
+plot_folder = "country stacked barplots facet"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "facet_stacked_num_of_occ_published_Global_nobirds_FALSE"
+plot_folder = "country stacked barplots facet"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "facet_stacked_num_of_occ_published_Global_nobirds_TRUE"
+plot_folder = "country stacked barplots facet"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "timeseries_num_occ"
+plot_folder = "time series"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "timeseries_num_occ_published"
+plot_folder = "time series"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "timeseries_num_species"
+plot_folder = "time series"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "timeseries_num_species_published"
+plot_folder = "time series"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "gdp_per_capita_current_us_num_occ_published_nobirds_full_model_FALSE"
+plot_folder = "gdp plots"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "gdp_per_capita_current_us_occ_published_total_full_model_FALSE"
+plot_folder = "gdp plots"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "network_health_country"
+plot_folder = "network health"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+
+# Region Specific Plots 
+
+### stacked barcharts about
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "country_stacked_num_of_occ_Europe and Central Asia"
+plot_folder = "country stacked barplots"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "country_stacked_num_of_occ_North America"
+plot_folder = "country stacked barplots"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "country_stacked_num_of_occ_Latin America and The Caribbean"
+plot_folder = "country stacked barplots"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "country_stacked_num_of_occ_Africa"
+plot_folder = "country stacked barplots"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "country_stacked_num_of_occ_Asia"
+plot_folder = "country stacked barplots"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+### stacked barcharts published
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "country_stacked_num_of_occ_published_Europe and Central Asia"
+plot_folder = "country stacked barplots"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "country_stacked_num_of_occ_published_North America"
+plot_folder = "country stacked barplots"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "country_stacked_num_of_occ_published_Latin America and The Caribbean"
+plot_folder = "country stacked barplots"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "country_stacked_num_of_occ_published_Africa"
+plot_folder = "country stacked barplots"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+```{R,echo=FALSE, message=FALSE, warning=FALSE,echo=FALSE, results="hide"}
+plot_name = "country_stacked_num_of_occ_published_Asia"
+plot_folder = "country stacked barplots"
+```
+
+![](`r path_to_plots`/`r plot_folder`/svg/`r plot_name`.svg)
+
+<div style="text-align:right;"><sub>
+[jpg](`r github_path`/`r plot_folder`/jpg/`r plot_name`.jpg) | 
+[pdf](`r github_path`/`r plot_folder`/pdf/`r plot_name`.pdf) | 
+[svg](`r github_path`/`r plot_folder`/svg/`r plot_name`.svg) | 
+[code](https://github.com/jhnwllr/gbif_regional_statistics)
+</div>
+
+
+

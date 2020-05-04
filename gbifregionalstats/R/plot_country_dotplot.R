@@ -12,7 +12,9 @@ plot_country_dotplot = function(
   gain_color =  "#FDAF02",
   comparison_snapshot = "2015-01-19",
   comparison_snapshot_label = "2015",
-  plot_lower = FALSE
+  plot_lower = FALSE,
+  n_breaks = 7,
+  x_axis_text_size = 11
 ) {
 
   if(gbif_region == "Global") {
@@ -85,7 +87,7 @@ plot_country_dotplot = function(
 
   print(glimpse(d))
 
-  breaks = scales::pretty_breaks(n = 7)(c(0,d[[variable]]))
+  breaks = scales::pretty_breaks(n = n_breaks)(c(0,d[[variable]]))
   labels = gbifapi::plot_label_maker(breaks,unit_MK,unit_scale)
 
   library(ggplot2)
@@ -99,7 +101,7 @@ plot_country_dotplot = function(
     theme(legend.title=element_blank()) +
     scale_color_manual(labels = c(comparison_snapshot_label, "2020"), values = c("#535362",gain_color)) +
     scale_y_continuous(breaks = breaks,labels=labels) +
-    theme(axis.text.x=element_text(face="plain",size=12,color="#535362")) +
+    theme(axis.text.x=element_text(face="plain",size=x_axis_text_size,color="#535362")) +
     theme(axis.text.y=element_text(face="plain",size=country_text_size,color="#535362")) +
     theme(axis.title.x = element_text(margin = margin(t = 15, r = 0, b = 0, l = 0), size = 12, face="plain",color="#535362")) +
     theme(plot.title = element_text(color="#535362", size=11, face="bold")) +

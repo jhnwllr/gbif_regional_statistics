@@ -290,7 +290,7 @@ glimpse()
 
 vars %>%
 map(~ 
-stats_plotter_global(D,
+gbifregionalstats::stats_plotter_global(D,
 isea3h = gbifregionalstats::isea3h_res6,
 variable_ = .x$variable_,
 legend_title_=.x$legend_title_,
@@ -301,7 +301,7 @@ filter_column_value = NULL
 map2(vars,~ 
 {
 ggsave(paste0("C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/hexagon plots/global_",.y$variable_,".pdf"),plot=.x,scale=1,width=9,height=5)
-# ggsave(paste0("C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/hexagon plots/global_",.y$variable_,".svg"),plot=.x,scale=1,width=9,height=5)
+ggsave(paste0("C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/hexagon plots/global_",.y$variable_,".svg"),plot=.x,scale=1,width=9,height=5)
 ggsave(paste0("C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/hexagon plots/global_",.y$variable_,".jpg"),plot=.x,scale=1,width=9,height=5,dpi=900)
 })
 }
@@ -2014,216 +2014,448 @@ ggsave(paste0(path_to_plots,"data use/jpg/data_use.jpg"),plot=p,width=16*0.5,hei
 
 }
 
-# change in number of species since 2015 dotplots
-library(dplyr)
-library(purrr)
+if(FALSE) { # change in number of species since 2015 dotplots
+# library(dplyr)
+# library(purrr)
 
-d = readr::read_tsv("http://download.gbif.org/custom_download/jwaller/country_counts_time_series.tsv") %>%
-mutate(iso2 = country) %>%
-merge(gbifapi::get_gbif_countries(),id="iso2") %>%
-janitor::clean_names() %>%
-mutate(snapshot=stringr::str_replace_all(snapshot,"occurrence_","")) %>%
-mutate(date=lubridate::ymd(snapshot)) %>%
-mutate(gbif_region = stringr::str_replace_all(gbif_region,"_"," ")) %>%
-mutate(gbif_region = stringr::str_to_title(gbif_region)) %>%
-mutate(gbif_region = gbifapi::replace_gbif_region(gbif_region,shorten=FALSE)) %>%
-filter(!gbif_region == "Antarctica") %>% 
-glimpse()
-
-
+# d = readr::read_tsv("http://download.gbif.org/custom_download/jwaller/country_counts_time_series.tsv") %>%
+# mutate(iso2 = country) %>%
+# merge(gbifapi::get_gbif_countries(),id="iso2") %>%
+# janitor::clean_names() %>%
+# mutate(snapshot=stringr::str_replace_all(snapshot,"occurrence_","")) %>%
+# mutate(date=lubridate::ymd(snapshot)) %>%
+# mutate(gbif_region = stringr::str_replace_all(gbif_region,"_"," ")) %>%
+# mutate(gbif_region = stringr::str_to_title(gbif_region)) %>%
+# mutate(gbif_region = gbifapi::replace_gbif_region(gbif_region,shorten=FALSE)) %>%
+# filter(!gbif_region == "Antarctica") %>% 
+# glimpse()
 
 
 
-################################################# Global Parameters 
-
-parameters_num_of_occ_global = tibble(
-variable = "occ_count",
-gbif_region = "Global"
-) %>% 
-mutate(plot_title = paste0(gbif_region, "")) %>% 
-mutate(plot_subtitle = "Number of occurrences about country on GBIF") %>% 
-mutate(y_lab = "number of occurrences") %>%
-mutate(filter_count = 5e6) %>%
-mutate(country_text_size = 11) %>%
-mutate(unit_scale = 1e-6) %>%
-mutate(unit_MK = "M") %>%
-mutate(gain_color =  "#509E2F") %>% 
-mutate(comparison_snapshot = "2015-01-19") %>%
-mutate(comparison_snapshot_label = "2015") 
-
-parameters_num_species_global = tibble(
-variable = "species_count",
-gbif_region = "Global"
-) %>% 
-mutate(plot_title = paste0(gbif_region, "")) %>% 
-mutate(plot_subtitle = "Number of species about country on GBIF") %>% 
-mutate(y_lab = "number of species") %>%
-mutate(filter_count = 2e4) %>%
-mutate(country_text_size = 11) %>%
-mutate(unit_scale = 1e-3) %>%
-mutate(unit_MK = "K") %>%
-mutate(gain_color =  "#FDAF02") %>% 
-mutate(comparison_snapshot = "2015-01-19") %>%
-mutate(comparison_snapshot_label = "2015") 
-
-parameters_occ_published_global = tibble(
-variable = "occ_count_published",
-gbif_region = "Global"
-) %>% 
-mutate(plot_title = paste0(gbif_region, "")) %>% 
-mutate(plot_subtitle = "Number of occurrences published by country on GBIF") %>% 
-mutate(y_lab = "number of occurrences") %>%
-mutate(filter_count = 5e5) %>%
-mutate(country_text_size = 11) %>%
-mutate(unit_scale = 1e-6) %>%
-mutate(unit_MK = "M") %>%
-mutate(gain_color =  "#40BFFF") %>% 
-mutate(comparison_snapshot = "2015-01-19") %>%
-mutate(comparison_snapshot_label = "2015")
-
-parameters_species_published_global = tibble(
-variable = "species_count_published",
-gbif_region = "Global"
-) %>% 
-mutate(plot_title = paste0(gbif_region, "")) %>% 
-mutate(plot_subtitle = "Number of species published by country on GBIF") %>% 
-mutate(y_lab = "number of species") %>%
-mutate(filter_count = 1e4) %>%
-mutate(country_text_size = 11) %>%
-mutate(unit_scale = 1e-3) %>%
-mutate(unit_MK = "K") %>%
-mutate(gain_color =  "#D66F27") %>% 
-mutate(comparison_snapshot = "2015-01-19") %>%
-mutate(comparison_snapshot_label = "2015")
 
 
+################################################ Global Parameters 
 
-plot_country_dotplot_change = function(
-  d,
-  variable = "num_species",
-  plot_title = "Europe - Number of Species",
-  y_lab = "number of species",
-  country_text_size = 10,
-  gbif_region = "Europe",
-  filter_count = 1e4,
-  plot_subtitle = "Unique species with occurrences in country",
-  unit_MK = "M",
-  unit_scale = 1e-3,
-  gain_color =  "#FDAF02",
-  comparison_snapshot = "2015-01-19",
-  comparison_snapshot_label = "2015",
-  plot_lower = FALSE
-) {
-  if(gbif_region == "Global") {
+# parameters_num_of_occ_global = tibble(
+# variable = "occ_count",
+# gbif_region = "Global"
+# ) %>% 
+# mutate(plot_title = paste0(gbif_region, "")) %>% 
+# mutate(plot_subtitle = "Number of occurrences about country on GBIF") %>% 
+# mutate(y_lab = "number of occurrences") %>%
+# mutate(filter_count = 5e6) %>%
+# mutate(country_text_size = 11) %>%
+# mutate(unit_scale = 1e-6) %>%
+# mutate(unit_MK = "M") %>%
+# mutate(gain_color =  "#509E2F") %>% 
+# mutate(comparison_snapshot = "2015-01-19") %>%
+# mutate(comparison_snapshot_label = "2015") 
 
-    d = gbifapi::get_gbif_countries() %>%
-      select(iso2,title) %>%
-      merge(d,id=iso2) %>%
-      mutate(title = gbifapi::clean_country_titles(title)) %>%
-      mutate(date = as.character(date)) %>%
-      filter(date == !! comparison_snapshot | date == "2020-01-01") %>%
-      select(title,
-             date,
-             species_count,
-             occ_count
-      )
-  } else {
+# parameters_num_species_global = tibble(
+# variable = "species_count",
+# gbif_region = "Global"
+# ) %>% 
+# mutate(plot_title = paste0(gbif_region, "")) %>% 
+# mutate(plot_subtitle = "Number of species about country on GBIF") %>% 
+# mutate(y_lab = "number of species") %>%
+# mutate(filter_count = 2e4) %>%
+# mutate(country_text_size = 11) %>%
+# mutate(unit_scale = 1e-3) %>%
+# mutate(unit_MK = "K") %>%
+# mutate(gain_color =  "#FDAF02") %>% 
+# mutate(comparison_snapshot = "2015-01-19") %>%
+# mutate(comparison_snapshot_label = "2015") 
 
-    d = gbifapi::get_gbif_countries() %>%
-      select(iso2,title) %>%
-      merge(d,id=iso2) %>%
-      mutate(title = gbifapi::clean_country_titles(title)) %>%
-      mutate(date = as.character(date)) %>%
-      filter(gbif_region == !! gbif_region) %>%
-      filter(date == !! comparison_snapshot | date == "2020-01-01") %>%
-      select(title,
-             date,
-             species_count,
-             occ_count
-      )
-  }
+# parameters_occ_published_global = tibble(
+# variable = "occ_count_published",
+# gbif_region = "Global"
+# ) %>% 
+# mutate(plot_title = paste0(gbif_region, "")) %>% 
+# mutate(plot_subtitle = "Number of occurrences published by country on GBIF") %>% 
+# mutate(y_lab = "number of occurrences") %>%
+# mutate(filter_count = 5e5) %>%
+# mutate(country_text_size = 11) %>%
+# mutate(unit_scale = 1e-6) %>%
+# mutate(unit_MK = "M") %>%
+# mutate(gain_color =  "#40BFFF") %>% 
+# mutate(comparison_snapshot = "2015-01-19") %>%
+# mutate(comparison_snapshot_label = "2015")
 
-  countries_to_keep = d %>%
-    filter(!! rlang::sym(variable) > !! filter_count) %>%
-    pull(title)
+# parameters_species_published_global = tibble(
+# variable = "species_count_published",
+# gbif_region = "Global"
+# ) %>% 
+# mutate(plot_title = paste0(gbif_region, "")) %>% 
+# mutate(plot_subtitle = "Number of species published by country on GBIF") %>% 
+# mutate(y_lab = "number of species") %>%
+# mutate(filter_count = 1e4) %>%
+# mutate(country_text_size = 11) %>%
+# mutate(unit_scale = 1e-3) %>%
+# mutate(unit_MK = "K") %>%
+# mutate(gain_color =  "#D66F27") %>% 
+# mutate(comparison_snapshot = "2015-01-19") %>%
+# mutate(comparison_snapshot_label = "2015")
 
-  ## change part 	
-  d = d %>% 
-  filter(title %in% !! countries_to_keep) %>%
-  tidyr::pivot_wider(names_from = date, values_from = !! rlang::sym(variable)) %>%
-  tidyr::replace_na(list(`2020-01-01` = 0, `2015-01-19` = 0))  %>%
-  mutate(change = `2020-01-01` - `2015-01-19`) %>%
-  group_by(title) %>%
-  summarise(change = max(change)) %>%
-  na.omit() %>%
-  mutate(log10_change = log10(change)) %>%
-  mutate(title = forcats::fct_reorder(title,log10_change)) %>%
-  glimpse()
+
+
+# plot_country_dotplot_change = function(
+  # d,
+  # variable = "num_species",
+  # plot_title = "Europe - Number of Species",
+  # y_lab = "number of species",
+  # country_text_size = 10,
+  # gbif_region = "Europe",
+  # filter_count = 1e4,
+  # plot_subtitle = "Unique species with occurrences in country",
+  # unit_MK = "M",
+  # unit_scale = 1e-3,
+  # gain_color =  "#FDAF02",
+  # comparison_snapshot = "2015-01-19",
+  # comparison_snapshot_label = "2015",
+  # plot_lower = FALSE
+# ) {
+  # if(gbif_region == "Global") {
+
+    # d = gbifapi::get_gbif_countries() %>%
+      # select(iso2,title) %>%
+      # merge(d,id=iso2) %>%
+      # mutate(title = gbifapi::clean_country_titles(title)) %>%
+      # mutate(date = as.character(date)) %>%
+      # filter(date == !! comparison_snapshot | date == "2020-01-01") %>%
+      # select(title,
+             # date,
+             # species_count,
+             # occ_count
+      # )
+  # } else {
+
+    # d = gbifapi::get_gbif_countries() %>%
+      # select(iso2,title) %>%
+      # merge(d,id=iso2) %>%
+      # mutate(title = gbifapi::clean_country_titles(title)) %>%
+      # mutate(date = as.character(date)) %>%
+      # filter(gbif_region == !! gbif_region) %>%
+      # filter(date == !! comparison_snapshot | date == "2020-01-01") %>%
+      # select(title,
+             # date,
+             # species_count,
+             # occ_count
+      # )
+  # }
+
+  # countries_to_keep = d %>%
+    # filter(!! rlang::sym(variable) > !! filter_count) %>%
+    # pull(title)
+
+  # change part 	
+  # d = d %>% 
+  # filter(title %in% !! countries_to_keep) %>%
+  # tidyr::pivot_wider(names_from = date, values_from = !! rlang::sym(variable)) %>%
+  # tidyr::replace_na(list(`2020-01-01` = 0, `2015-01-19` = 0))  %>%
+  # mutate(change = `2020-01-01` - `2015-01-19`) %>%
+  # group_by(title) %>%
+  # summarise(change = max(change)) %>%
+  # na.omit() %>%
+  # mutate(log10_change = log10(change)) %>%
+  # mutate(title = forcats::fct_reorder(title,log10_change)) %>%
+  # glimpse()
 
   # breaks = scales::pretty_breaks(n = 7)(c(0,d$log10_change))
   # print(breaks)
   # 0 1 2 3 4 5 6
-  breaks = c(0, 1, 2, 3, 4, 5, 6)
-  labels = c("0","10","100","1K","10K","100K","1M")
+  # # breaks = c(0, 1, 2, 3, 4, 5, 6)
+  # # labels = c("0","10","100","1K","10K","100K","1M")
   # labels = gbifapi::plot_label_maker(breaks,unit_MK,unit_scale)
 
-  library(ggplot2)
-  p = ggplot(d,aes(title,log10_change)) +
-    geom_point(size=2) +
-    coord_flip() +
-    xlab("") +
-    ylab(y_lab) +
-    theme_bw() +
-    scale_y_continuous(breaks = breaks,labels=labels,limits=c(3.5,6)) +
-    theme(axis.text.x=element_text(face="plain",size=12,color="#535362")) +
-    theme(axis.text.y=element_text(face="plain",size=6,color="#535362")) +
-    labs(title = plot_title,subtitle = plot_subtitle)
+  # library(ggplot2)
+  # p = ggplot(d,aes(title,log10_change)) +
+    # geom_point(size=2) +
+    # coord_flip() +
+    # xlab("") +
+    # ylab(y_lab) +
+    # theme_bw() +
+    # scale_y_continuous(breaks = breaks,labels=labels,limits=c(3.5,6)) +
+    # theme(axis.text.x=element_text(face="plain",size=12,color="#535362")) +
+    # theme(axis.text.y=element_text(face="plain",size=6,color="#535362")) +
+    # labs(title = plot_title,subtitle = plot_subtitle)
     # theme(legend.position = c(0.9, 0.1)) +
     # theme(legend.title=element_blank()) +
     # scale_color_manual(labels = c(comparison_snapshot_label, "2020"), values = c("#535362",gain_color)) +
     # theme(axis.title.x = element_text(margin = margin(t = 15, r = 0, b = 0, l = 0), size = 12, face="plain",color="#535362")) +
     # theme(plot.title = element_text(color="#535362", size=11, face="bold")) +
 
-  return(p)
-}
+  # # return(p)
+# # }
     # parameters_num_of_occ_global,
 
-parameters = 
-parameters_num_species_global %>%
-purrr::transpose()
+# parameters = 
+# parameters_num_species_global %>%
+# purrr::transpose()
 
-path_to_plots = "C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/"
+# path_to_plots = "C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/"
+
+# library(ggplot2)
+
+# parameters %>%
+# map( ~
+# plot_country_dotplot_change(
+# d,
+# variable = .x$variable,
+# plot_title = .x$plot_title,
+# y_lab = .x$y_lab,
+# country_text_size = .x$country_text_size,
+# gbif_region = .x$gbif_region,
+# filter_count = .x$filter_count,
+# plot_subtitle = .x$plot_subtitle,
+# unit_MK = .x$unit_MK,
+# unit_scale = .x$unit_scale,
+# gain_color =  .x$gain_color,
+# comparison_snapshot = .x$comparison_snapshot,
+# comparison_snapshot_label = .x$comparison_snapshot_label,
+# plot_lower = FALSE
+# )) %>%
+# map2(parameters,~{
+# ggsave(paste0(path_to_plots,"country dotplots/pdf/change_dotplot_",.y$variable,"_",.y$gbif_region,".pdf"),plot=.x,width=6,height=5)
+# ggsave(paste0(path_to_plots,"country dotplots/svg/change_dotplot_",.y$variable,"_",.y$gbif_region,".svg"),plot=.x,width=6,height=5)
+# ggsave(paste0(path_to_plots,"country dotplots/jpg/change_dotplot_",.y$variable,"_",.y$gbif_region,".jpg"),plot=.x,width=6,height=5,dpi=600)
+# })
+
+}
+
+
+if(FALSE) { # hexagon species count blue green plot_poly_map_gaps
+
+es50Breaks = function(grid,numBreaks) {
+
+  sd4 = sd(grid$var,na.rm=TRUE)*4 # smart breaks skip lower bunch
+  es50_breaks = grid %>% filter(var > sd4) %>% pull(var)
+  breaks = seq(sd4,max(es50_breaks,na.rm=TRUE)+1,length.out=numBreaks) %>% round(0)
+  breaks = c(0,breaks)
+
+  return(breaks)
+}
+
+linearBreaks = function(grid,numBreaks) {
+  seq(0,max(grid$var,na.rm=TRUE),length.out=numBreaks)
+}
+
+logBreaks = function(numBreaks) {
+  10^(1:numBreaks)
+}
+
+getLabels = function(breaks) {
+
+  Start = 2:length(breaks) %>% map_dbl(~breaks[.x-1])
+  Finish = 1:(length(breaks)-1) %>% map_dbl(~breaks[.x+1])
+
+  return(paste0(Start,"-",Finish))
+}
+
+plot_poly_map_gaps = function(grid,
+                       variable,
+                       breaks=c(1,27,38,42,44,46,48,50),
+                       labels=NULL,
+                       legend_title="es50",
+                       pretty_breaks=7,
+                       zoom_x=c(-150,170),
+                       zoom_y=c(-55,80),
+                       legend.position = c(.50,-0.05),
+                       polygon_text_size=1,
+                       polygon_alpha=1,
+                       labelType="identity",
+                       keywidth=0.01,
+                       keyheight=0.2,
+                       legend_text_size=12,
+                       numBreaks=6,
+                       breaksType="linear",
+                       country_line_color = NA
+) { # a data.frame of taxonkey,count,cell
+
+
+  grid$var = grid[,variable] # rename variable
+
+  if(is.null(breaks)) {
+    if(breaksType == "es50") breaks = es50Breaks(grid,numBreaks)
+    if(breaksType == "linear") breaks = linearBreaks(grid,numBreaks)
+    if(breaksType == "log") breaks = logBreaks(numBreaks)
+  }
+  if(is.null(labels)) labels = getLabels(breaks)
+
+  grid = grid %>% 
+		filter(!is.na(var)) %>% # remove missing
+		mutate(
+		fancyLabel = case_when(
+		var >= 1e6 ~ round(var/1e6) %+% "M",
+		var >= 1e3 ~ round(var/1e3) %+% "K",
+		TRUE ~ as.character(var)
+		))
+
+  manual_colors = c("#E8E8E8", "#175CA1", "#509E2F")
+  manual_labels = c("<5K","5K-10K",">10K")
+
+  # countries = map_data("world")
+countries = gbifapi::ggplot2_small_map_data(dTolerance=1.2)
+  
+  p = ggplot() +
+    coord_cartesian(zoom_x,zoom_y) +
+    geom_polygon(data=countries,aes(x=long, y=lat, group=group), fill="#D8DACF", color=country_line_color,alpha=0.8) +
+    geom_path(data=grid,aes(x=long,y=lat,group=group), alpha=1, color="#7d8085") +
+    geom_polygon(data=grid,aes(x=long,y=lat,group=group,fill=cut(var,breaks, manual_labels )),alpha=polygon_alpha) +
+    scale_fill_manual(values = manual_colors) +
+    guides(fill=guide_legend(title=legend_title,label.position="bottom",keywidth=keywidth,keyheight=keyheight,nrow=1)) +
+    theme_bw() +
+    theme(panel.background = element_rect(fill = '#F0F3F8')) +
+    scale_y_continuous(name="",breaks = seq(-90,90,by = 20),labels=rep("",length(seq(-90,90,by = 20)))) +
+    scale_x_continuous(name="",breaks = seq(-175,175,by = 20),labels=rep("",length(seq(-175,175,by = 20)))) +
+    theme(legend.position=legend.position,legend.direction="horizontal") +
+    theme(axis.ticks.x=element_blank()) +
+    theme(axis.ticks.y=element_blank()) +
+    theme(legend.text=element_text(size=legend_text_size), legend.title=element_text(size=legend_text_size))
+
+  if(labelType == "identity") {
+    p = p + geom_text(data=grid,aes(lonCenter,latCenter,label=round(var,0)),size=polygon_text_size)
+  }
+  if(labelType == "fancy") {
+    p = p + geom_text(data=grid,aes(lonCenter,latCenter,label=fancyLabel),size=polygon_text_size)
+  }
+
+  return(p)
+}
+
+
+hexagon_plot_global = function(D,
+                         isea3h = gbifregionalstats::isea3h_res6,
+                         variable_ = "num_species",
+                         legend_title_="number of species",
+                         breaks_ = c(0,5000,60000),
+                         filter_column_string = NULL,
+                         filter_column_value = NULL
+                        ) {
+
+
+  D = D %>%
+    mutate(id = as.integer(polygon_id)) %>%
+    merge(isea3h,id="id",all.y=TRUE) %>%
+    mutate(long = lon) %>%
+    mutate(lat = lat) %>%
+    mutate(group = id) %>%
+    filter(!date_line_polygon) %>%
+    filter(!is.na(iso2)) %>%
+    arrange(ordering)
+
+  D %>% glimpse()
+
+  # library(gbifrasters)
+  library(ggplot2)
+
+  p = plot_poly_map_gaps(grid = D,
+                  variable = variable_,
+                  breaks=breaks_,
+                  labels=NULL,
+                  legend_title=legend_title_,
+                  pretty_breaks=7,
+                  zoom_x=c(-165,165),
+                  zoom_y=c(-55,80),
+                  legend.position = c(.50,-0.05),
+                  polygon_text_size=2,
+                  polygon_alpha=0.6,
+                  labelType="",
+                  keywidth=0.01,
+                  keyheight=0.2,
+                  legend_text_size=12,
+                  numBreaks=7,
+                  breaksType="fancy",
+                  country_line_color = "#c3c4c4")
+
+  return(p)
+}
+
+
 
 library(ggplot2)
+library(dplyr)
+library(purrr)
+library(roperators)
 
-parameters %>%
-map( ~
-plot_country_dotplot_change(
-d,
-variable = .x$variable,
-plot_title = .x$plot_title,
-y_lab = .x$y_lab,
-country_text_size = .x$country_text_size,
-gbif_region = .x$gbif_region,
-filter_count = .x$filter_count,
-plot_subtitle = .x$plot_subtitle,
-unit_MK = .x$unit_MK,
-unit_scale = .x$unit_scale,
-gain_color =  .x$gain_color,
-comparison_snapshot = .x$comparison_snapshot,
-comparison_snapshot_label = .x$comparison_snapshot_label,
-plot_lower = FALSE
+vars = tibble::tribble(
+~breaks,~variable_,~legend_title_,
+c(0,5000,10000,55000),"num_species","species count"
+) %>% purrr::transpose()
+
+vars
+
+D = data.table::fread("C:/Users/ftw712/Desktop/gbif_regional_statistics/data/polygon_counts_isea3h_res6.tsv") %>% 
+glimpse()
+
+vars %>%
+map(~ 
+hexagon_plot_global(D,
+isea3h = gbifregionalstats::isea3h_res6,
+variable_ = .x$variable_,
+legend_title_=.x$legend_title_,
+breaks_ = .x$breaks,
+filter_column_string = NULL,
+filter_column_value = NULL
 )) %>%
-map2(parameters,~{
-ggsave(paste0(path_to_plots,"country dotplots/pdf/change_dotplot_",.y$variable,"_",.y$gbif_region,".pdf"),plot=.x,width=6,height=5)
-ggsave(paste0(path_to_plots,"country dotplots/svg/change_dotplot_",.y$variable,"_",.y$gbif_region,".svg"),plot=.x,width=6,height=5)
-ggsave(paste0(path_to_plots,"country dotplots/jpg/change_dotplot_",.y$variable,"_",.y$gbif_region,".jpg"),plot=.x,width=6,height=5,dpi=600)
+map2(vars,~ 
+{
+ggsave(paste0("C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/hexagon plots/pdf/global_",.y$variable_,".pdf"),plot=.x,scale=1,width=9,height=5)
+ggsave(paste0("C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/hexagon plots/svg/global_",.y$variable_,".svg"),plot=.x,scale=1,width=9,height=5)
+ggsave(paste0("C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/hexagon plots/jpg/global_",.y$variable_,".jpg"),plot=.x,scale=1,width=9,height=5,dpi=900)
 })
 
+}
 
+# if(FALSE) { # plot regions separately 
 
+library(ggplot2)
+library(dplyr)
+library(purrr)
+library(roperators)
+library(gbifregionalstats)
 
+vars = tibble::tribble(
+~gbif_region,~region_value,~orientation, ~xlim_ortho, ~ylim_ortho,~breaks,~variable_,~legend_title_,
+"europe","Europe",c(50.72,20,4.5),c(-25,70), c(75,25),c(0,5000,10000,55000),"num_species","species count",
+"afrca", "Africa",c(0.7901464,22.8335061,4.26),c(-25,70),c(-40,40),c(0,5000,10000,55000),"num_species","species count",
+"latin america","Americas",c(-17.60,-60.62,4),c(-100.85,-24.21),c(-61.36,27.51),c(0,5000,10000,55000),"num_species","species count",
+"asia", "Asia", c(26.6078252,98.0344816,3.66), c(-32.14,178.39), c(-13.43,79.00), c(0,5000,10000,55000),"num_species","species count",
+"north america", "Americas", c(47.2058929,-97.297683,3.88), c(-171.91,-9.48), c(9.88,84.27), c(0,5000,10000,55000),"num_species","species count",
+"oceania", "Oceania", c(-13.4796711,152.8237114,4.04), c(100.87,-175.45), c(-51.8,5.19), c(0,5000,10000,55000),"num_species","species count"
+) %>% 
+purrr::transpose()
 
+# filter(gbif_region=="oceania") %>%
 
+# POLYGON((-171.91 84.27,-9.48 84.27,-9.48 9.88,-171.91 9.88,-171.91 84.27))
+# POLYGON((100.87 5.19,-175.45 5.19,-175.45 -51.8,100.87 -51.88,100.87 5.19))
 
+D = data.table::fread("C:/Users/ftw712/Desktop/gbif_regional_statistics/data/polygon_counts_isea3h_res6.tsv") %>% 
+glimpse()
+
+# filter(variable_ == "num_species") %>%
+# vars
+
+plots = vars %>%
+map(~
+stats_plotter(D,
+isea3h = gbifregionalstats::isea3h_res6,
+variable_ = .x$variable_,
+legend_title_=.x$legend_title_,
+breaks_ = .x$breaks,
+filter_column_string = NULL,
+filter_column_value = NULL,
+orientation = .x$orientation,
+xlim_ortho = .x$xlim_ortho,
+ylim_ortho = .x$ylim_ortho,
+region_value = toupper(.x$gbif_region)
+)) %>%
+map2(vars,~ {
+ggsave(paste0("C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/hexagon plots/pdf/",.y$gbif_region,"_",.y$variable_,".pdf"),plot=.x,scale=1,width=9,height=5)
+# ggsave(paste0("C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/hexagon plots/",.y$gbif_region,"_",.y$variable_,".svg"),plot=.x,scale=1,width=9,height=5)
+# ggsave(paste0("C:/Users/ftw712/Desktop/gbif_regional_statistics/plots/hexagon plots/",.y$gbif_region,"_",.y$variable_,".jpg"),plot=.x,scale=1,width=9,height=5,dpi=600)
+})
+
+if(FALSE) {
+}
 

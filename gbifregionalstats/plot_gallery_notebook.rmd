@@ -585,7 +585,9 @@ mutate(unit_scale = 1e-6) %>%
 mutate(unit_MK = "M") %>%
 mutate(gain_color =  "#40BFFF") %>% 
 mutate(comparison_snapshot = "2015-01-19") %>%
-mutate(comparison_snapshot_label = "2015")
+mutate(comparison_snapshot_label = "2015") %>%
+mutate(n_breaks = 5) %>% 
+mutate(x_axis_text_size = 11)
 
 parameters_species_published = tibble(
 variable = "species_count_published",
@@ -600,7 +602,9 @@ mutate(unit_scale = 1e-3) %>%
 mutate(unit_MK = "K") %>%
 mutate(gain_color =  "#D66F27") %>% 
 mutate(comparison_snapshot = "2015-01-19") %>%
-mutate(comparison_snapshot_label = "2015")
+mutate(comparison_snapshot_label = "2015") %>%
+mutate(n_breaks = 5) %>% 
+mutate(x_axis_text_size = 11)
 
 parameters_num_species = tibble(
 variable = "species_count",
@@ -615,7 +619,9 @@ mutate(unit_scale = 1e-3) %>%
 mutate(unit_MK = "K") %>%
 mutate(gain_color =  "#FDAF02") %>% 
 mutate(comparison_snapshot = "2015-01-19") %>%
-mutate(comparison_snapshot_label = "2015") 
+mutate(comparison_snapshot_label = "2015") %>%
+mutate(n_breaks = 5) %>% 
+mutate(x_axis_text_size = 11)
 
 parameters_num_of_occ = tibble(
 variable = "occ_count",
@@ -630,7 +636,9 @@ mutate(unit_scale = 1e-6) %>%
 mutate(unit_MK = "M") %>%
 mutate(gain_color =  "#509E2F") %>% 
 mutate(comparison_snapshot = "2015-01-19") %>%
-mutate(comparison_snapshot_label = "2015") 
+mutate(comparison_snapshot_label = "2015") %>%
+mutate(n_breaks = 5) %>% 
+mutate(x_axis_text_size = 11)  
 
 }
 
@@ -649,7 +657,9 @@ mutate(unit_scale = 1e-6) %>%
 mutate(unit_MK = "M") %>%
 mutate(gain_color =  "#509E2F") %>% 
 mutate(comparison_snapshot = "2015-01-19") %>%
-mutate(comparison_snapshot_label = "2015") 
+mutate(comparison_snapshot_label = "2015") %>%
+mutate(n_breaks = 5) %>% 
+mutate(x_axis_text_size = 11)  
 
 parameters_num_species_global = tibble(
 variable = "species_count",
@@ -658,13 +668,16 @@ gbif_region = "Global"
 mutate(plot_title = paste0(gbif_region, "")) %>% 
 mutate(plot_subtitle = "Number of species about country on GBIF") %>% 
 mutate(y_lab = "number of species") %>%
-mutate(filter_count = 5e4) %>%
+mutate(filter_count = 3e3) %>%
 mutate(country_text_size = 11) %>%
-mutate(unit_scale = 1e-3) %>%
+mutate(unit_scale = 1e-4) %>%
 mutate(unit_MK = "K") %>%
 mutate(gain_color =  "#FDAF02") %>% 
 mutate(comparison_snapshot = "2015-01-19") %>%
-mutate(comparison_snapshot_label = "2015") 
+mutate(comparison_snapshot_label = "2015") %>%
+mutate(n_breaks = 5) %>% 
+mutate(x_axis_text_size = 11)
+
 
 parameters_occ_published_global = tibble(
 variable = "occ_count_published",
@@ -679,7 +692,10 @@ mutate(unit_scale = 1e-6) %>%
 mutate(unit_MK = "M") %>%
 mutate(gain_color =  "#40BFFF") %>% 
 mutate(comparison_snapshot = "2015-01-19") %>%
-mutate(comparison_snapshot_label = "2015")
+mutate(comparison_snapshot_label = "2015") %>%
+mutate(n_breaks = 5) %>% 
+mutate(x_axis_text_size = 11)
+
 
 parameters_species_published_global = tibble(
 variable = "species_count_published",
@@ -694,9 +710,9 @@ mutate(unit_scale = 1e-3) %>%
 mutate(unit_MK = "K") %>%
 mutate(gain_color =  "#D66F27") %>% 
 mutate(comparison_snapshot = "2015-01-19") %>%
-mutate(comparison_snapshot_label = "2015")
-
-
+mutate(comparison_snapshot_label = "2015") %>%
+mutate(n_breaks = 5) %>% 
+mutate(x_axis_text_size = 11)
 
 parameters = rbind(
     parameters_num_of_occ,
@@ -729,7 +745,9 @@ unit_scale = .x$unit_scale,
 gain_color =  .x$gain_color,
 comparison_snapshot = .x$comparison_snapshot,
 comparison_snapshot_label = .x$comparison_snapshot_label,
-plot_lower = FALSE
+plot_lower = FALSE,
+n_breaks = 5,
+x_axis_text_size = 11
 )) %>%
 map2(parameters,~{
 ggsave(paste0(path_to_plots,"country dotplots/pdf/country_dotplot_",.y$variable,"_",.y$gbif_region,".pdf"),plot=.x,width=6,height=5)
